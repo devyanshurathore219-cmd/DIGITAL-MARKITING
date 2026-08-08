@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DIGIWEBNOW - Project Detail</title>
+
+    <!-- External Libraries -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/locomotive-scroll@3.5.4/dist/locomotive-scroll.css">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.css" rel="stylesheet"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Creato+Display:wght@400;700;900&display=swap" rel="stylesheet">
+    
+   <style>
+        /* ==================================== */
+        /* CORE STYLES (Formerly styles.css)    */
+        /* ==================================== */
+
+        /* === GLOBAL VARIABLES === */
+        :root {
+            --font-main: "Creato Display", Arial, sans-serif;
+            
+            /* NEW THEME COLORS */
+            --theme-deep-blue: #064AF9;      /* Primary Blue / Starting Gradient */
+            --theme-purple: #A31AC0;         /* Secondary Purple / Gradient Mid */
+            --theme-cyan: #2FDDCD;           /* Tertiary Cyan / Accent Glow */
+            --theme-indigo: #2825C0;         /* Dark Accent / Background Detail */
+            
+            /* --- Core Site Colors --- */
+            --bg-color: #040810; 
+            --text-white: #ffffff;
+            --text-slate: #94a3b8;
+
+            /* --- Theme Aliases --- */
+            --primary-color: var(--theme-purple);
+            --secondary-color: var(--theme-deep-blue);
+            --text-dark: var(--theme-deep-blue); 
+            --text-color: var(--theme-deep-blue);
+            --white: var(--theme-cyan);
+            
+            --accent-green: var(--theme-cyan);
+            --accent-green-hover: #21C0B4;
+            --card-bg: #1a1a1a;
+            --theme-pink: #db2777;
+            --theme-orange: #f97316;
+            --theme-red: #dc2626;
+
+            /* --- Layout Vars --- */
+            --nav-height: 80px;
+            --spacing-container: 1380px;
+            --font-main-inter: 'Inter', sans-serif;
+
+            /* --- Legacy Vars --- */
+            --text-light:#767268;
+            --extra-light:#f7f8fd;
+            --_responsive---margin-140px: 140px;
+            --_responsive---margin-50px: 50px;
+            --_typography---font-family--global-font: 'Inter', sans-serif;
+            --_colors---grey-1: #fff;
+            --_colors---light-grey: #f0f0f0;
+            --_colors---dark: #111;
+            --_colors---yellow: var(--theme-cyan);
+            --_typography---font-size--paragraph--para-03: 16px;
+            --_typography---line-height--paragraph--para-03: 1.6;
+            --_typography---letter-spacing--heading--h2: -0.02em;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: var(--font-main-inter);
+        }
+
+        body {
+            cursor: none;
+            background-color: var(--bg-color);
+            color: var(--text-white);
+            overflow-x: hidden;
+        }
+
+        .cursor-dot,
+        .cursor-outline {
+            pointer-events: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            z-index: 99999;
+            opacity: 1;
+            transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+        }
+
+        .cursor-dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--secondary-color);
+        }
+
+        .cursor-outline {
+            width: 40px;
+            height: 40px;
+            border: 2px solid var(--secondary-color);
+            transition: width 0.3s ease-in-out, height 0.3s ease-in-out, border 0.3s ease-in-out;
+        }
+
+        body:has(a:hover, button:hover) .cursor-outline {
+            width: 60px;
+            height: 60px;
+            border-width: 3px;
+            background-color: rgba(47, 221, 205, 0.2); 
+        }
+        
+        body:has(a:hover, button:hover) .cursor-dot {
+            opacity: 0;
+        }
+        
+        @media (max-width: 768px) {
+            .cursor-dot, .cursor-outline { display: none; }
+            body { cursor: auto; }
+        }
+
+        /* --- LOADER --- */
+        #loader {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            z-index: 99999; background-color: #fff;
+            display: flex; align-items: center; justify-content: center;
+        }
+        #loader-inner {
+            width: 60vw; height: 20vh; background-color: #111; border-radius: 80px;
+        }
+        nav, #main { opacity: 0; }
+
+        /* --- NAVIGATION --- */
+        .site-nav {
+            position: fixed; top: 0; left: 0; right: 0;
+            height: var(--nav-height);
+            background: rgba(2, 6, 23, 0.8);
+            backdrop-filter: blur(12px);
+            z-index: 9999; border-bottom: 1px solid rgba(255,255,255,0.05);
+            display: flex; align-items: center;
+        }
+        .nav-inner {
+            width: 100%; max-width: 1400px; margin: 0 auto;
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0 30px;
+        }
+        .nav__logo h1 a { color: var(--text-white); text-decoration: none; font-weight: 700; font-size: 1.5rem; }
+        .nav__links { display: flex; gap: 40px; list-style: none; }
+        .nav__links a { color: var(--text-white); text-decoration: none; font-weight: 500; transition: 0.3s; }
+        .nav__links a:hover { color: var(--theme-cyan); }
+        .contact-btn {
+            background: linear-gradient(90deg, var(--theme-deep-blue), var(--theme-purple));
+            color: #fff; border: none; padding: 10px 25px;
+            border-radius: 8px; cursor: pointer;
+            display: flex; align-items: center; gap: 0.5rem;
+            font-weight: 600; transition: transform 0.2s;
+        }
+        .contact-btn:hover { 
+            transform: translateY(-2px); 
+            box-shadow: 0 4px 12px rgba(6, 74, 249, 0.3); 
+        }
+        .contact-btn svg { width: 1rem; height: 1rem; }
+
+        /* --- HERO SECTION STYLES (Required for Index, but good to have) --- */
+        .hero-section { width: 100%; min-height: 100vh; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; padding-top: var(--nav-height); }
+        /* ... (Omitting strictly Index-only 3D Hero styles if not used here, but kept generic classes) ... */
+
+        /* --- FOOTER --- */
+        footer { background-color: var(--bg-color); }
+        .footer__container{ display: grid; gap: 4rem 2rem; background-color: var(--bg-color); }
+        .footer__logo{ margin-bottom: 2rem; }
+        .footer__logo a{ font-size: 1.25rem; font-weight: 800; color: var(--text-white); }
+        .footer__logo a span{ color: var(--theme-cyan); }
+        .footer__col .section__description{ margin-bottom: 2rem; text-align: left; }
+        .footer__col h3{ margin-bottom: 1rem; font-size: 1.25rem; font-weight: 700; color: var(--text-dark); }
+        .footer__socials{ display: flex; align-items: center; gap: 0.5rem; }
+        .footer__socials a{ padding: 4px 6px; font-size: 1.25rem; color: var(--text-white); border: 1px solid var(--secondary-color); border-radius: 100%; }
+        .footer__socials a:hover{ color: var(--text-white); background-color: var(--secondary-color); }
+        .footer__col h4{ margin-bottom: 2rem; font-size: 1.2rem; font-weight: 700; color: var(--text-white); }
+        .footer__links{ display: grid; gap: 1rem; }
+        .footer__links a{ font-size: 1rem; font-weight: 500; color: var(--text-slate); }
+        .footer__links a:hover{ color: var(--secondary-color); }
+        .footer__links a span{ margin-right: 0.5rem; font-size: 1.25rem; color: var(--secondary-color); }
+        .footer__bar{ background-color: var(--bg-color); padding: 1rem; font-size: 1rem; font-weight: 500; color: var(--text-slate); text-align: center; }
+        @media (width > 540px) { .footer__container{ grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); } }
+        @media (width > 768px) { .footer__container{ grid-template-columns: repeat(5, 1fr); } .footer__col:nth-child(1){ grid-column: 1/3; max-width: 350px; } }
+
+        /* ==================================== */
+        /* PROJECT SPECIFIC OVERRIDES           */
+        /* ==================================== */
+        
+        :root {
+            /* Map global theme vars to project specific vars */
+            --brand-accent: var(--theme-cyan);
+            --dark-surface: #1a1a1a;
+        }
+
+        /* Ensure Project Page Font Matches Index (Inter) or Creato for Headers if desired */
+        body { font-family: 'Inter', sans-serif; }
+        .h1, .h2, .h3 { font-family: 'Creato Display', sans-serif; }
+
+        /* Project Layout Styles */
+        .project-hero { padding-top: 150px; text-align: center; }
+        .project-hero h1 span { color: var(--brand-accent); }
+        .project-subtitle { margin-top: 2rem; margin-bottom: 2rem; font-weight: 300; font-size: clamp(1.2rem, 2vw, 1.8rem); color: var(--text-slate); }
+        
+        .h1 { font-size: clamp(4rem, 8vw, 12rem); line-height: 1.05; font-weight: 900; text-transform: uppercase; letter-spacing: -0.05em; color: #fff; }
+        .h2 { font-size: clamp(2.5rem, 4vw, 3.5rem); font-weight: 700; line-height: 1.1; letter-spacing: -0.04em; color: #fff; }
+        .h3 { font-size: clamp(1.8rem, 2.5vw, 2.5rem); font-weight: 700; line-height: 1.2; color: #fff; }
+        .paragraph-02 { font-size: clamp(1.1rem, 1.3vw, 1.4rem); line-height: 1.6; color: var(--text-slate); }
+        .paragraph-03 { font-size: 1rem; line-height: 1.6; color: #aaa; }
+
+        /* Stats & Links */
+        .stats-and-links { display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 2rem; padding-bottom: 5rem; border-bottom: 1px solid rgba(255, 255, 255, 0.05); max-width: 900px; margin: 0 auto; }
+        .stats-row { display: flex; flex-wrap: wrap; justify-content: center; gap: 3rem; }
+        .stat-item strong { display: block; font-size: 1.8rem; color: var(--brand-accent); line-height: 1.1; }
+        .stat-item span { display: block; font-size: 0.9rem; color: #aaa; margin-top: 5px; }
+        
+        .live-link { 
+            background: linear-gradient(90deg, var(--theme-deep-blue), var(--theme-purple)); 
+            color: #fff; padding: 12px 25px; border-radius: 50px; font-weight: 700; text-decoration: none; 
+            transition: background-color 0.3s ease, transform 0.2s ease; display: inline-flex; align-items: center; gap: 8px; 
+            box-shadow: 0 4px 15px rgba(6, 74, 249, 0.3);
+        }
+        .live-link:hover { opacity: 0.9; transform: translateY(-2px); box-shadow: 0 10px 25px rgba(6, 74, 249, 0.4); }
+
+        /* Layout Grid */
+        .description-scroll-section { display: grid; grid-template-columns: 1fr 2fr; gap: 5rem; padding: 8rem 0; position: relative; }
+        .sticky-summary { position: sticky; top: 120px; height: fit-content; padding: 20px; border-left: 3px solid var(--brand-accent); }
+        .sticky-summary h3 { margin-bottom: 1.5rem; color: #fff; }
+        .detailed-content .h2 { margin-top: 4rem; margin-bottom: 2rem; color: #fff; }
+        .detailed-content .paragraph-02 { margin-bottom: 2rem; }
+
+        .gallery-section { padding: 6rem 0; }
+        .staggered-image-wrap { margin-bottom: 4rem; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4); transition: transform 0.5s ease; }
+        .staggered-image-wrap img { display: block; width: 100%; height: auto; }
+        .image-full-width { max-width: 100%; margin: 0 auto; }
+        
+        /* Next Project CTA */
+        .next-project-cta { padding: 8rem 0; text-align: center; background-color: var(--dark-surface); border-top: 1px solid rgba(255, 255, 255, 0.05); }
+        .next-project-cta p { font-size: 1.1rem; color: var(--brand-accent); margin-bottom: 1rem; }
+        .next-project-cta a { text-decoration: none; display: block; transition: transform 0.3s ease; }
+        .next-project-cta a:hover { transform: translateY(-5px); opacity: 0.9; }
+        .next-project-cta .h1 { font-size: clamp(3rem, 7vw, 9rem); line-height: 1; margin-bottom: 0; }
+
+        @media (max-width: 1024px) {
+            .description-scroll-section { grid-template-columns: 1fr; gap: 40px; padding: 5rem 0; }
+            .sticky-summary { position: static; border-left: none; padding-left: 0; padding-bottom: 20px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="loader">
+        <div id="loader-inner" style="width: 100%; height: 100%; background: #000; border-radius: 0;"></div>
+    </div>
+
+    <!-- Cursors -->
+    <div class="cursor-dot"></div>
+    <div class="cursor-outline"></div>
+
+    <div class="noise-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; opacity: 0.04; background-image: url('data:image/svg+xml,%3Csvg viewBox=\'0 0 200 200\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cfilter id=\'noiseFilter\'%3E%3CfeTurbulence type=\'fractalNoise\' baseFrequency=\'0.65\' numOctaves=\'3\' stitchTiles=\'stitch\'/%3E%3C/filter%3E%3Crect width=\'100%25\' height=\'100%25\' filter=\'url(%23noiseFilter)\'/%3E%3C/svg%3E');"></div>
+
+    <!-- NAVIGATION (Matches Index) -->
+    <nav class="site-nav">
+      <div class="nav-inner">
+        <div class="nav__logo">
+            <h1><a href="index.html">DigiWebNow</a></h1>
+        </div>
+    
+        <ul class="nav__links">
+          <a href="index.html#about">About Us</a>
+          <a href="index.html#portfolio">Portfolio</a>
+          <a href="index.html#services">Services</a>
+          <a href="index.html#blog">Blog</a>
+        </ul>
+    
+        <button class="contact-btn">Let's Talk
+          <svg fill="none" viewBox="0 0 20 20"><path fill="#fff" d="M2.5 14.375V17.5h3.125l9.217-9.217-3.125-3.125L2.5 14.375Zm14.758-8.508a.83.83 0 0 0 0-1.175l-1.95-1.95a.83.83 0 0 0-1.175 0l-1.525 1.525 3.125 3.125 1.525-1.525Z"></path></svg>
+        </button>
+      </div>
+    </nav>
+    
+  <div id="main">
+        <!-- Project Hero Section -->
+        <section class="project-hero" data-scroll-section>
+            <div class="container">
+                <a href="index.html#portfolio" class="back-link paragraph-03 hover-trigger" id="back-to-portfolio" style="color: #aaa; text-decoration: none;">
+                    <i class="ri-arrow-left-line"></i> Back to Portfolio
+                </a>
+                
+                <!-- DYNAMIC CONTENT: TITLE & SUBTITLE -->
+                <h1 class="h1 hover-trigger" id="p1-hero-title">Mono &amp; <span>Motion</span></h1>
+                <p class="project-subtitle paragraph-02" id="p1-hero-sub">
+                    A sleek, highly interactive corporate website redesign focused on kinetic typography and immersive visual storytelling.
+                </p>
+                
+                <div class="stats-and-links">
+                    <div class="stats-row">
+                        <div class="stat-item">
+                            <!-- DYNAMIC STATS -->
+                            <strong id="p1-stat-1-val">+35%</strong>
+                            <span id="p1-stat-1-lbl">Engagement Lift</span>
+                        </div>
+                        <div class="stat-item">
+                            <strong id="p1-stat-2-val">Webflow</strong>
+                            <span id="p1-stat-2-lbl">Tech Stack</span>
+                        </div>
+                    </div>
+                    <a href="index.html" target="_blank" class="live-link hover-trigger">
+                        View Live Site <i class="ri-external-link-line"></i>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- DYNAMIC HERO IMAGE -->
+        <div class="container staggered-image-wrap image-full-width" data-scroll-section>
+            <img id="p1-hero-img" src="images/projects/mono_hero.jpg" alt="Full website mockup">
+        </div>
+
+        <section class="container description-scroll-section" data-scroll-section>
+            <div class="sticky-summary">
+                <h3 class="h3" id="p1-obj-title">The Objective</h3>
+                <p class="paragraph-02" id="p1-obj-text">
+                    Mono & Motion needed a digital presence that was, in itself, a portfolio piece. The goal was to replace a static site with an experience defined by fluid, scroll-based interactions and high-performance visual delivery.
+                </p>
+            </div>
+            
+            <div class="detailed-content">
+                <h2 class="h2" id="p1-part1-title">Part 1: The Narrative Scroll</h2>
+                <p class="paragraph-02" id="p1-part1-text">
+                    We implemented a "narrative scroll" approach, transforming traditional page navigation into a seamless, immersive journey.
+                </p>
+                
+                <h2 class="h2" id="p1-part2-title">Part 2: Visual Identity</h2>
+                <p class="paragraph-02" id="p1-part2-text">
+                    The visual identity is anchored in bold minimalism—deep blacks and sharp whites—to maximize contrast.
+                </p>
+                
+                <p class="paragraph-02" id="p1-part3-text">
+                    The site relaunch resulted in a measurable 35% increase in user engagement and a 20% uplift in direct studio inquiries.
+                </p>
+                
+                <div class="staggered-image-wrap image-full-width mt-12">
+                    <img id="p1-mid-img" src="images/projects/mono_mid.jpg" alt="Mobile UX layout">
+                </div>
+            </div>
+        </section>
+
+        <section class="gallery-section container" data-scroll-section>
+            <h2 class="h2 text-center" style="color: var(--brand-accent);">Project Visual Breakdown</h2>
+            <div class="staggered-image-wrap image-hight-100 image-width-300 mt-12">
+                <img id="p1-bot-img" src="images/projects/mono_breakdown.jpg" alt="Full project visual breakdown">
+            </div>
+        </section>
+
+        <section class="next-project-cta" data-scroll-section>
+            <div class="container">
+                <p>Next Project</p>
+                <!-- ADDED ID for dynamic linking -->
+                <a href="#" id="next-proj-link" class="hover-trigger">
+                    <h1 class="h1" id="next-proj-title">Zero <span>Studio</span></h1>
+                </a>
+            </div>
+        </section>
+        
+        <!-- FOOTER (Matches Index) -->
+        <footer data-scroll-section>
+            <div class="section__container footer__container">
+                <div class="footer__col">
+                    <div class="footer__logo">
+                        <a href="index.html">DIGIWEB<span>NOW</span></a>
+                    </div>
+                    <p class="section__description">
+                       DIGIWEBNOW is a creative digital agency dedicated to delivering innovative solutions. 
+                    </p>
+                    <h3>Follow Us</h3>   
+                    <ul class="footer__socials">
+                        <li><a href="#"><i class="ri-facebook-fill"></i></a></li>
+                        <li><a href="#"><i class="ri-twitter-fill"></i></a></li>
+                        <li><a href="#"><i class="ri-instagram-fill"></i></a></li>
+                        <li><a href="#"><i class="ri-behance-fill"></i></a></li>
+                        <li><a href="#"><i class="ri-youtube-fill"></i></a></li>
+                    </ul>
+                </div>
+                <div class="footer__col">
+                    <h4>Quick Links</h4>
+                    <ul class="footer__links">
+                        <li><a href="index.html#about">About DIGIWEBNOW</a></li>
+                        <li><a href="index.html#blog">Latest News & Blogs</a></li>
+                        <li><a href="#">Terms of Users</a></li>
+                        <li><a href="index.html#services">Our Services</a></li>
+                        <li><a href="#">Need a Career?</a></li>
+                    </ul>
+                </div>
+                <div class="footer__col">
+                    <h4>Support</h4>
+                    <ul class="footer__links">
+                        <li><a href="#">Help Center</a></li>
+                        <li><a href="#">FAQs</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Report an Issue</a></li>
+                        <li><a href="#">Get a Quote</a></li>
+                    </ul>
+                </div>
+                <div class="footer__col">
+                    <h4>Contact Us</h4>
+                    <ul class="footer__links">
+                        <li><a href="#d">
+                          <span><i class="ri-phone-fill"></i></span> +91 0987654321
+                        </a>
+            </li>
+                <li><a href="#">
+                    <span><i class="ri-mail-fill"></i></span> info@digiwebnow.com
+                </a>
+            </li>
+                <li><a href="#">
+                    <span><i class="ri-map-pin-fill"></i></span>  2456 Royal In. Delhi
+                </a>
+            </li>
+            </ul>
+         </div>
+            </div>
+            <div class="footer__bar">
+               Copyright © 2025 DIGIWEBNOW. All rights reserved.
+            </div>
+        </footer>
+    </div>
+
+    <!-- Scripts -->
+    <script src="script.js"></script>
+    
+    <script>
+        gsap.registerPlugin(ScrollTrigger);
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- LOAD DATA FROM ADMIN PANEL ---
+            const loadP1Data = () => {
+                const stored = localStorage.getItem('DIGIWEB_PROJ_DETAIL_1');
+                if(!stored) return; // Use HTML defaults if no data
+
+                try {
+                    const data = JSON.parse(stored);
+                    
+                    const setTxt = (id, txt) => { 
+                        const el = document.getElementById(id); 
+                        if(el && (txt !== undefined && txt !== null)) el.textContent = txt; 
+                    };
+                    const setImg = (id, src) => { const el = document.getElementById(id); if(el && src) el.src = src; };
+
+                    if(data.title) {
+                        const parts = data.title.split(' ');
+                        const lastWord = parts.pop();
+                        document.getElementById('p1-hero-title').innerHTML = `${parts.join(' ')} <span>${lastWord}</span>`;
+                    }
+
+                    setTxt('p1-hero-sub', data.subtitle);
+                    setImg('p1-hero-img', data.heroImg);
+                    setTxt('p1-stat-1-val', data.stat1Val);
+                    setTxt('p1-stat-1-lbl', data.stat1Lbl);
+                    setTxt('p1-stat-2-val', data.stat2Val);
+                    setTxt('p1-stat-2-lbl', data.stat2Lbl);
+                    setTxt('p1-obj-title', data.objTitle);
+                    setTxt('p1-obj-text', data.objText);
+                    setTxt('p1-part1-title', data.part1Title);
+                    setTxt('p1-part1-text', data.part1Text);
+                    setTxt('p1-part2-title', data.part2Title);
+                    setTxt('p1-part2-text', data.part2Text);
+                    setTxt('p1-part3-text', data.part3Text);
+                    setImg('p1-mid-img', data.midImg);
+                    setImg('p1-bot-img', data.botImg);
+
+                    // --- NEW LOGIC: NEXT PROJECT LINK ---
+                    if (data.nextProjTitle) {
+                         const parts = data.nextProjTitle.split(' ');
+                         const lastWord = parts.pop();
+                         const html = parts.length > 0 ? `${parts.join(' ')} <span>${lastWord}</span>` : `<span>${lastWord}</span>`;
+                         document.getElementById('next-proj-title').innerHTML = html;
+                    }
+                    if (data.nextProjLink) {
+                        document.getElementById('next-proj-link').href = data.nextProjLink;
+                    }
+
+                } catch(e) { console.error("Error loading P1 data", e); }
+            };
+
+            loadP1Data();
+
+            // --- ANIMATIONS ---
+            const cursor = document.querySelector('.cursor-dot');
+            const outline = document.querySelector('.cursor-outline');
+            const hoverTriggers = document.querySelectorAll('.hover-trigger');
+
+            // Wait for script.js to initialize main functionality (Locomotive, etc.)
+            window.addEventListener('site-loaded', () => {
+                
+                const summary = document.querySelector('.sticky-summary');
+                const content = document.querySelector('.detailed-content');
+                
+                if (window.innerWidth > 1024 && summary && content) {
+                    ScrollTrigger.create({ 
+                        trigger: content, 
+                        start: "top 120px", 
+                        end: "bottom 80%", 
+                        pin: summary, 
+                        pinSpacing: false,
+                        scroller: "#main" 
+                    });
+                }
+
+                document.querySelectorAll('.staggered-image-wrap').forEach((image) => {
+                    gsap.from(image, { 
+                        y: 50, 
+                        opacity: 0, 
+                        scale: 0.95, 
+                        duration: 1.2, 
+                        ease: "power3.out", 
+                        scrollTrigger: { 
+                            trigger: image, 
+                            start: "top 90%", 
+                            toggleActions: "play none none reverse",
+                            scroller: "#main"
+                        } 
+                    });
+                });
+                
+                ScrollTrigger.refresh();
+            });
+        });
+    </script>
+</body>
+</html>

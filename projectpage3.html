@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Marketing - DigiWebNow</title>
+    
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- GSAP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    
+    <!-- Remix Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.css" rel="stylesheet"/>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Creato+Display:wght@400;700;900&display=swap');
+        
+        /* === MATCHING GLOBAL THEME VARIABLES FROM STYLES.CSS === */
+        :root {
+            /* Theme Colors */
+            --theme-deep-blue: #064AF9;
+            --theme-purple: #A31AC0;
+            --theme-cyan: #2FDDCD;
+            --theme-indigo: #2825C0;
+            
+            /* Aliases for Project Page logic */
+            --brand-accent: var(--theme-cyan);
+            --secondary-color: var(--theme-deep-blue);
+            
+            /* Backgrounds */
+            --bg-color: #040810; 
+            --dark-bg: #040810; 
+            --surface-color: #111111;
+            
+            /* Text */
+            --text-white: #ffffff;
+            --text-slate: #94a3b8;
+            --text-light: #767268;
+            --text-dark: var(--theme-deep-blue);
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-white);
+            font-family: 'Creato Display', sans-serif;
+            overflow-x: hidden;
+            cursor: none; /* Custom cursor active */
+        }
+
+        /* --- CUSTOM CURSOR (MATCHING INDEX.HTML) --- */
+        .cursor-dot,
+        .cursor-outline {
+            pointer-events: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            z-index: 99999;
+            opacity: 1;
+            transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+        }
+
+        .cursor-dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--secondary-color);
+        }
+
+        .cursor-outline {
+            width: 40px;
+            height: 40px;
+            border: 2px solid var(--secondary-color);
+            transition: width 0.3s ease-in-out, height 0.3s ease-in-out, border 0.3s ease-in-out;
+        }
+
+        /* Cursor Hover States */
+        body:has(a:hover, button:hover) .cursor-outline {
+            width: 60px;
+            height: 60px;
+            border-width: 3px;
+            background-color: rgba(47, 221, 205, 0.2); /* Cyan glow */
+        }
+        
+        body:has(a:hover, button:hover) .cursor-dot {
+            opacity: 0;
+        }
+
+        /* Mobile Cursor Reset */
+        @media (max-width: 768px) {
+            .cursor-dot, .cursor-outline { display: none; }
+            body { cursor: auto; }
+        }
+
+        /* Noise Overlay */
+        .noise-overlay {
+            position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            opacity: 0.04;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+
+        /* Typography */
+        .text-display {
+            line-height: 0.9;
+            letter-spacing: -0.03em;
+        }
+        
+        /* --- Bento Card Styling --- */
+        .bento-card {
+            background-color: var(--surface-color);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 24px;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.4s ease, border-color 0.4s ease;
+            z-index: 10;
+            padding: 24px;
+        }
+        
+        .bento-card:hover {
+            border-color: var(--brand-accent);
+        }
+
+        /* Pill Tag */
+        .pill-tag {
+            display: inline-block;
+            padding: 6px 16px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50px;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--brand-accent);
+            margin-bottom: 1.5rem;
+        }
+        
+        /* Card Title */
+        .card-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 12px;
+        }
+        .card-description {
+            color: #a1a1aa; /* Zinc-400 */
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+        
+        /* Graph Animation */
+        .graph-container {
+            width: 100%;
+            height: 150px;
+            display: flex;
+            align-items: flex-end;
+            gap: 4px;
+            border-bottom: 1px solid #333;
+            padding: 0 10px;
+        }
+        .graph-bar {
+            width: 100%;
+            background-color: var(--brand-accent);
+            opacity: 0.5;
+            animation: grow 1.5s ease-out infinite alternate;
+        }
+        @keyframes grow {
+            from { transform: scaleY(0.1); }
+            to { transform: scaleY(1); }
+        }
+
+        /* Creative SEO Card */
+        .blinking-cursor { animation: blink 1s infinite; }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+        .result-item.top-rank { animation: pulse-glow 2s infinite alternate; }
+        @keyframes pulse-glow {
+            from { border-color: var(--brand-accent); box-shadow: 0 0 5px rgba(47, 221, 205, 0.2); }
+            to { border-color: var(--brand-accent); box-shadow: 0 0 20px rgba(47, 221, 205, 0.5); }
+        }
+
+        /* Social Mockups */
+        .social-mockup {
+            background-color: #222;
+            border-radius: 8px;
+            padding: 12px;
+            margin-top: 1rem;
+            border: 1px solid #333;
+        }
+        .social-mockup-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+        .social-mockup-header .avatar {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: var(--brand-accent);
+        }
+        .social-mockup-body {
+            height: 50px;
+            border-radius: 4px;
+            background-color: #333;
+        }
+
+        /* Nav */
+        .site-nav {
+            position: fixed; top: 0; left: 0; right: 0;
+            height: 80px;
+            background: rgba(4, 8, 16, 0.8);
+            backdrop-filter: blur(12px);
+            z-index: 100;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+        .nav__logo a { color: var(--brand-accent); }
+        .nav__links a:hover { color: var(--brand-accent); }
+        .contact-btn {
+            background: linear-gradient(90deg, var(--theme-deep-blue), var(--theme-purple));
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(6, 74, 249, 0.25);
+        }
+        .contact-btn:hover { opacity: 0.9; }
+        
+        main { position: relative; z-index: 10; }
+
+        /* --- FOOTER STYLES (MATCHING MAIN SITE) --- */
+        footer { background-color: var(--bg-color); }
+        
+        .section__container.footer__container {
+            display: grid;
+            gap: 4rem 2rem;
+            background-color: var(--bg-color);
+            padding: 4rem 2rem; 
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .footer__logo { margin-bottom: 2rem; }
+        .footer__logo a {
+            font-size: 1.25rem; font-weight: 800;
+            color: var(--text-dark);
+            text-decoration: none;
+        }
+        .footer__logo a span { color: var(--theme-cyan); }
+        
+        .footer__col { display: flex; flex-direction: column; }
+        .footer__col .section__description { margin-bottom: 2rem; text-align: left; color: var(--text-slate); }
+        .footer__col h3, .footer__col h4 {
+            margin-bottom: 1rem; font-size: 1.25rem;
+            font-weight: 700; color: var(--text-dark);
+        }
+        
+        .footer__socials { display: flex; align-items: center; gap: 0.5rem; list-style: none; padding: 0; }
+        .footer__socials a {
+            padding: 4px 6px; font-size: 1.25rem; color: var(--secondary-color);
+            border: 1px solid var(--secondary-color);
+            border-radius: 100%; transition: all 0.3s ease;
+        }
+        .footer__socials a:hover { color: #fff; background-color: var(--secondary-color); }
+        
+        .footer__links { display: grid; gap: 1rem; list-style: none; padding: 0; }
+        .footer__links a {
+            font-size: 1rem; font-weight: 500;
+            color: var(--text-slate); text-decoration: none; transition: color 0.3s ease;
+        }
+        .footer__links a:hover { color: var(--secondary-color); }
+        .footer__links a span { margin-right: 0.5rem; font-size: 1.25rem; color: var(--secondary-color); }
+        
+        .footer__bar {
+            background-color: var(--bg-color); padding: 1rem; font-size: 1rem;
+            font-weight: 500; color: var(--text-slate); text-align: center;
+            border-top: 1px solid rgba(255,255,255,0.05); 
+        }
+        
+        @media (min-width: 540px) {
+            .footer__container { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+        }
+        @media (min-width: 768px) {
+            .footer__container { grid-template-columns: repeat(5, 1fr); }
+            .footer__col:nth-child(1) { grid-column: 1/3; max-width: 350px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Updated Custom Cursor Structure (Matching Index) -->
+    <div class="cursor-dot"></div>
+    <div class="cursor-outline"></div>
+    
+    <div class="noise-overlay"></div>
+
+    <!-- Navigation -->
+    <nav class="site-nav flex items-center justify-between px-6 md:px-12">
+        <div class="text-xl font-bold tracking-tight">
+            <a href="index.html" class="hover-trigger" style="color: var(--brand-accent);">DIGIWEB<span>NOW</span></a>
+        </div>
+        
+        <div class="hidden md:flex gap-10">
+            <a href="index.html#about" class="hover-trigger text-white font-medium hover:text-[--brand-accent] transition-colors">About Us</a>
+            <a href="index.html#portfolio" class="hover-trigger text-white font-medium hover:text-[--brand-accent] transition-colors">Portfolio</a>
+            <a href="index.html#services" class="hover-trigger font-bold" style="color: var(--brand-accent);">Services</a>
+            <a href="index.html#blog" class="hover-trigger text-white font-medium hover:text-[--brand-accent] transition-colors">Blog</a>
+        </div>
+        
+        <button class="contact-btn hover-trigger text-white px-6 py-2 rounded-full text-sm font-medium transition-all duration-300">
+            Let's Talk
+        </button>
+    </nav>
+
+    <main class="pt-32 pb-20 px-4 md:px-8 max-w-[1600px] mx-auto">
+        
+        <!-- Hero -->
+        <header class="mb-32 text-center relative">
+            <h1 class="text-display text-[12vw] font-black uppercase text-white leading-none relative z-10 mix-blend-difference">
+                <div class="overflow-hidden"><span id="p3-hero-title-1" class="hero-line block">Amplify</span></div>
+                <div class="overflow-hidden"><span id="p3-hero-title-2" class="hero-line block text-transparent bg-clip-text" style="background-image: linear-gradient(to right, var(--brand-accent), var(--theme-purple));">Your Reach</span></div>
+            </h1>
+            
+            <p id="p3-hero-desc" class="text-xl text-gray-400 max-w-2xl mx-auto mt-8 relative z-10">
+                We use data-driven strategies and creative execution to connect your brand with the right audience, at the right time.
+            </p>
+        </header>
+
+        <!-- Digital Marketing Bento Grid -->
+        <section id="p3-grid" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6 auto-rows-[auto]">
+            <!-- CARDS WILL BE GENERATED BY JAVASCRIPT -->
+        </section>
+
+        <!-- Footer CTA -->
+        <section class="mt-32 text-center relative z-10 mb-20">
+            <p class="uppercase tracking-widest text-sm mb-4" style="color: var(--brand-accent);">Ready to Grow?</p>
+            <h2 class="text-[6vw] font-bold leading-none mb-8 text-white hover-trigger">Start a Campaign</h2>
+            <a href="#" class="inline-block text-lg font-bold px-10 py-4 rounded-full hover:scale-105 hover-trigger shadow-[0_0_20px_rgba(47,221,205,0.3)]"
+               style="background: linear-gradient(90deg, var(--theme-deep-blue), var(--theme-purple)); color: white; transition: background 0.3s ease, transform 0.3s ease;"
+               onmouseover="this.style.background='var(--brand-accent)'; this.style.color='var(--dark-bg)';" 
+               onmouseout="this.style.background='linear-gradient(90deg, var(--theme-deep-blue), var(--theme-purple))'; this.style.color='white';">
+                Get in Touch <i class="ri-arrow-right-line ml-2"></i>
+            </a>
+        </section>
+        
+    </main>
+
+    <!-- Full Footer (Matching Index Page Exact Structure) -->
+    <footer>
+        <div class="section__container footer__container">
+            <div class="footer__col">
+                <div class="footer__logo">
+                    <a href="index.html">DIGIWEB<span>NOW</span></a>
+                </div>
+                <p class="section__description">
+                   DIGIWEBNOW is a creative digital agency dedicated to delivering innovative solutions. 
+                </p>
+                <h3>Follow Us</h3>   
+                <ul class="footer__socials">
+                    <li><a href="#"><i class="ri-facebook-fill"></i></a></li>
+                    <li><a href="#"><i class="ri-twitter-fill"></i></a></li>
+                    <li><a href="#"><i class="ri-instagram-fill"></i></a></li>
+                    <li><a href="#"><i class="ri-behance-fill"></i></a></li>
+                    <li><a href="#"><i class="ri-youtube-fill"></i></a></li>
+                </ul>
+            </div>
+            <div class="footer__col">
+                <h4>Quick Links</h4>
+                <ul class="footer__links">
+                    <li><a href="#">About DIGIWEBNOW</a></li>
+                    <li><a href="#">Latest News & Blogs</a></li>
+                    <li><a href="#">Terms of Users</a></li>
+                    <li><a href="#">Our Services</a></li>
+                    <li><a href="#">Need a Career?</a></li>
+                </ul>
+            </div>
+            <div class="footer__col">
+                <h4>Support</h4>
+                <ul class="footer__links">
+                    <li><a href="#">Help Center</a></li>
+                    <li><a href="#">FAQs</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Report an Issue</a></li>
+                    <li><a href="#">Get a Quote</a></li>
+                </ul>
+            </div>
+            <div class="footer__col">
+                <h4>Contact Us</h4>
+                <ul class="footer__links">
+                    <li><a href="#d">
+                      <span><i class="ri-phone-fill"></i></span> +91 0987654321
+                    </a>
+                </li>
+                    <li><a href="#">
+                        <span><i class="ri-mail-fill"></i></span> info@digiwebnow.com
+                    </a>
+                </li>
+                    <li><a href="#">
+                        <span><i class="ri-map-pin-fill"></i></span>  2456 Royal In. Delhi
+                    </a>
+                </li>
+                </ul>
+             </div>
+            </div>
+            <div class="footer__bar">
+               Copyright © 2025 DIGIWEBNOW. All rights reserved.
+         </div>
+    </footer>
+
+    <script src="script.js"></script>
+
+    <script>
+        gsap.registerPlugin(ScrollTrigger);
+
+        // --- 1. Custom Cursor Logic (MATCHING INDEX) ---
+        const dot = document.querySelector(".cursor-dot");
+        const out = document.querySelector(".cursor-outline");
+        const hoverTriggers = document.querySelectorAll('.hover-trigger');
+
+        if (dot && out) {
+            window.addEventListener("mousemove", (e) => {
+                const x = e.clientX;
+                const y = e.clientY;
+                
+                // Dot moves instantly
+                dot.style.left = `${x}px`;
+                dot.style.top = `${y}px`;
+                
+                // Outline follows with delay (using animate for smooth trails)
+                out.animate({ 
+                    left: `${x}px`, 
+                    top: `${y}px` 
+                }, { duration: 500, fill: "forwards" });
+            });
+        }
+
+        // --- 2. Hero Animations ---
+        gsap.from(".hero-line", {
+            y: 150, opacity: 0, duration: 1.2, ease: "power4.out", stagger: 0.15, delay: 0.2
+        });
+
+        // --- 3. Magnetic Card Hover Effect ---
+        const initMagnetic = () => {
+            const magneticCards = document.querySelectorAll('.magnetic-card');
+            magneticCards.forEach(card => {
+                card.addEventListener('mousemove', (e) => {
+                    const { clientX, clientY } = e;
+                    const { left, top, width, height } = card.getBoundingClientRect();
+                    const x = (clientX - (left + width / 2)) * 0.2;
+                    const y = (clientY - (top + height / 2)) * 0.2;
+                    gsap.to(card, { x: x, y: y, duration: 0.6, ease: 'elastic.out(1, 0.3)' });
+                });
+                card.addEventListener('mouseleave', () => {
+                    gsap.to(card, { x: 0, y: 0, duration: 1, ease: 'elastic.out(1, 0.3)' });
+                });
+            });
+        };
+
+        // --- 4. CREATIVE CARD HTML GENERATORS ---
+        const createSeoGraphic = () => `
+            <div class="mt-8 relative h-64 w-full">
+                <div class="search-bar w-full h-10 bg-[#0a0a0a] border border-gray-700 rounded-full flex items-center px-4 mb-3">
+                    <i class="ri-search-line text-gray-500"></i>
+                    <span class="ml-2 text-gray-500 text-sm">how to rank #1...</span>
+                    <span class="blinking-cursor w-0.5 h-4 bg-white ml-1"></span>
+                </div>
+                <div class="results-wrapper absolute top-16 left-0 w-full px-2">
+                    <div class="result-item top-rank p-3 bg-gray-800/50 rounded-lg shadow-lg mb-2" style="border: 1px solid var(--brand-accent); box-shadow: 0 0 10px rgba(47, 221, 205, 0.4);">
+                        <div class="h-3 w-1/2 rounded-full" style="background-color: var(--brand-accent);"></div>
+                        <div class="h-2 w-3/4 bg-gray-600 rounded-full mt-2"></div>
+                    </div>
+                    <div class="result-item p-3 bg-gray-800/30 border border-gray-700 rounded-lg mb-2"><div class="h-3 w-1/2 bg-gray-600 rounded-full"></div><div class="h-2 w-3/4 bg-gray-600 rounded-full mt-2"></div></div>
+                    <div class="result-item p-3 bg-gray-800/30 border border-gray-700 rounded-lg mb-2"><div class="h-3 w-1/2 bg-gray-600 rounded-full"></div><div class="h-2 w-3/4 bg-gray-600 rounded-full mt-2"></div></div>
+                </div>
+            </div>`;
+
+        const createPpcGraph = () => `
+            <div class="graph-container mt-8">
+                <div class="graph-bar" style="height: 30%; animation-delay: -0.2s;"></div>
+                <div class="graph-bar" style="height: 50%; animation-delay: -0.5s;"></div>
+                <div class="graph-bar" style="height: 40%; animation-delay: -0.8s;"></div>
+                <div class="graph-bar" style="height: 70%; animation-delay: -0.3s;"></div>
+                <div class="graph-bar" style="height: 60%; animation-delay: -1.0s;"></div>
+                <div class="graph-bar" style="height: 90%; animation-delay: -0.1s;"></div>
+            </div>`;
+
+        const createSmmMockups = () => `
+            <div class="space-y-4 mt-4">
+                <div class="social-mockup">
+                    <div class="social-mockup-header"><div class="avatar"></div><div class="w-24 h-3 bg-gray-500 rounded-full"></div></div>
+                    <div class="social-mockup-body"></div>
+                </div>
+                <div class="social-mockup opacity-70">
+                    <div class="social-mockup-header"><div class="avatar"></div><div class="w-20 h-3 bg-gray-500 rounded-full"></div></div>
+                    <div class="social-mockup-body"></div>
+                </div>
+            </div>`;
+
+        // --- 5. LOAD DATA FROM ADMIN PANEL ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const loadP3Data = () => {
+                const stored = localStorage.getItem('DIGIWEB_PROJ_DETAIL_3');
+                // We don't return early if no storage, instead we render nothing (allowing script.js defaults to potentially take over or just stay blank)
+                // Actually, let's look for defaults if storage is empty.
+                
+                try {
+                    const data = stored ? JSON.parse(stored) : {}; // Fallback to empty obj
+                    const setTxt = (id, txt) => { const el = document.getElementById(id); if(el && txt) el.textContent = txt; };
+
+                    // Hero
+                    if(data.heroTitle1) setTxt('p3-hero-title-1', data.heroTitle1);
+                    if(data.heroTitle2) setTxt('p3-hero-title-2', data.heroTitle2);
+                    if(data.heroDesc) setTxt('p3-hero-desc', data.heroDesc);
+                    
+                    // --- RENDER DYNAMIC CARDS ---
+                    const grid = document.getElementById('p3-grid');
+                    grid.innerHTML = ''; // Clear existing
+
+                    // Use cards from localstorage OR empty array (so user can populate via admin)
+                    // Note: If you want defaults on first load, script.js handles the initial save to localStorage usually.
+                    const cards = data.cards || [];
+
+                    cards.forEach(card => {
+                        let extraContent = '';
+                        let colClasses = card.wide ? 'md:col-span-2' : 'md:col-span-1';
+                        
+                        // Layout tweaks based on type
+                        let flexClass = 'flex flex-col justify-between';
+                        
+                        if (card.type === 'seo') {
+                            extraContent = createSeoGraphic();
+                            colClasses += ' lg:col-span-2 md:row-span-2'; // SEO usually big
+                        } else if (card.type === 'ppc') {
+                            extraContent = createPpcGraph();
+                            colClasses += ' lg:col-span-2';
+                        } else if (card.type === 'smm') {
+                            extraContent = createSmmMockups();
+                            colClasses += ' md:row-span-2';
+                        } else if (card.type === 'analytics') {
+                            extraContent = `
+                                <div class="mt-4 text-center">
+                                    <span class="text-6xl font-bold block" style="color: var(--brand-accent);">${card.statVal || '+0%'}</span>
+                                    <span class="block text-sm text-gray-400">${card.statLbl || 'Growth'}</span>
+                                </div>
+                            `;
+                        } else {
+                            // Standard or Content
+                            extraContent = `
+                                <div class="mt-4 flex justify-end">
+                                    <i class="ri-arrow-right-up-line text-2xl text-[--brand-accent]"></i>
+                                </div>
+                            `;
+                        }
+
+                        const cardHTML = `
+                            <div class="bento-card ${colClasses} hover-trigger magnetic-card p-8 ${flexClass} opacity-0 translate-y-12">
+                                <div>
+                                    <span class="pill-tag">${card.tag}</span>
+                                    <h2 class="card-title">${card.title}</h2>
+                                    <p class="card-description">${card.desc}</p>
+                                </div>
+                                ${extraContent}
+                            </div>
+                        `;
+                        grid.insertAdjacentHTML('beforeend', cardHTML);
+                    });
+
+                    // --- INIT GSAP AFTER CONTENT LOADED ---
+                    gsap.to(".bento-card", {
+                        y: 0, 
+                        opacity: 1, 
+                        duration: 0.8, 
+                        stagger: 0.1, 
+                        ease: "power2.out",
+                        scrollTrigger: { trigger: "#p3-grid", start: "top 85%" }
+                    });
+                    
+                    // Init Magnetic Effect on new elements
+                    initMagnetic();
+
+                    // Trigger specific animations if elements exist
+                    const resultsWrapper = document.querySelector('.results-wrapper');
+                    if (resultsWrapper) {
+                        gsap.to(resultsWrapper, {
+                            y: -60, duration: 1.5, ease: "power1.inOut", repeat: -1, delay: 1,
+                            onRepeat: () => { gsap.set(resultsWrapper, { y: 0 }); resultsWrapper.appendChild(resultsWrapper.firstElementChild); }
+                        });
+                    }
+
+                } catch(e) { console.error("Error loading P3 Data", e); }
+            };
+            loadP3Data();
+        });
+
+    </script>
+</body>
+</html>

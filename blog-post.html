@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Post - DigiWebNow</title>
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/locomotive-scroll@3.5.4/dist/locomotive-scroll.css">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.css" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Embedded Styles -->
+    <style>
+        /* === GLOBAL VARIABLES === */
+        :root {
+            --font-main: 'Inter', sans-serif;
+            
+            /* THEME COLORS */
+            --theme-deep-blue: #064AF9;      /* Primary */
+            --theme-purple: #A31AC0;         /* Secondary */
+            --theme-cyan: #2FDDCD;           /* Accent */
+            
+            /* CORE COLORS */
+            --bg-color: #040810; 
+            --text-white: #ffffff;
+            --text-slate: #94a3b8;
+            --card-bg: #1a1a1a;
+            
+            /* ALIASES */
+            --primary-color: var(--theme-purple);
+            --secondary-color: var(--theme-deep-blue);
+            --text-dark: var(--theme-deep-blue); 
+            --accent-green: var(--theme-cyan);
+            
+            --nav-height: 80px;
+            --spacing-container: 1380px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: var(--font-main); }
+        body { cursor: none; background-color: var(--bg-color); color: var(--text-white); overflow-x: hidden; }
+
+        /* --- CUSTOM CURSOR --- */
+        .cursor-dot, .cursor-outline {
+            pointer-events: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            border-radius: 50%; z-index: 99999; opacity: 1;
+            transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+        }
+        .cursor-dot { width: 8px; height: 8px; background-color: var(--theme-deep-blue); }
+        .cursor-outline { width: 40px; height: 40px; border: 2px solid var(--theme-deep-blue); transition: all 0.2s ease-out; }
+
+        body:has(a:hover, button:hover, .blog-card:hover) .cursor-outline {
+            width: 60px; height: 60px; background-color: rgba(47, 221, 205, 0.2); border-color: var(--theme-cyan);
+        }
+        body:has(a:hover, button:hover) .cursor-dot { opacity: 0; }
+
+        @media (max-width: 768px) { .cursor-dot, .cursor-outline { display: none; } body { cursor: auto; } }
+
+        /* --- LOADER --- */
+        #loader { position: fixed; inset: 0; z-index: 99999; background: #fff; display: flex; align-items: center; justify-content: center; }
+        #loader-inner { width: 60vw; height: 20vh; background: #111; border-radius: 80px; }
+        nav, #main { opacity: 0; }
+
+        /* --- NAVIGATION --- */
+        .site-nav {
+            position: fixed; top: 0; left: 0; right: 0; height: var(--nav-height);
+            background: rgba(2, 6, 23, 0.8); backdrop-filter: blur(12px);
+            z-index: 9999; border-bottom: 1px solid rgba(255,255,255,0.05);
+            display: flex; align-items: center;
+        }
+        .nav-inner { width: 100%; max-width: 1400px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 0 30px; }
+        .nav__logo h1 a { color: var(--text-white); font-weight: 700; font-size: 1.5rem; text-decoration: none; }
+        .nav__links { display: flex; gap: 40px; list-style: none; }
+        .nav__links a { color: var(--text-white); text-decoration: none; font-weight: 500; transition: 0.3s; }
+        .nav__links a:hover { color: var(--theme-cyan); }
+
+        .contact-btn {
+            background: linear-gradient(90deg, var(--theme-deep-blue), var(--theme-purple));
+            color: #fff; border: none; padding: 10px 25px; border-radius: 8px; cursor: pointer;
+            display: flex; align-items: center; gap: 0.5rem; font-weight: 600; transition: 0.3s;
+        }
+        .contact-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(6, 74, 249, 0.3); }
+        .contact-btn svg { width: 1rem; height: 1rem; }
+
+        /* --- PAGE HEADERS (Blog & Post) --- */
+        .page-header {
+            padding-top: calc(var(--nav-height) + 60px); padding-bottom: 60px;
+            background: radial-gradient(circle at 50% 0%, #1a1a2e 0%, var(--bg-color) 70%);
+            text-align: center; position: relative;
+        }
+        .page-header h1 {
+            font-size: clamp(3rem, 5vw, 5rem); font-weight: 800; line-height: 1.1; margin-bottom: 1rem;
+            background: linear-gradient(to right, #fff, #94a3b8); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .page-header p { font-size: 1.2rem; color: var(--text-slate); max-width: 600px; margin: 0 auto; }
+        .page-header span { color: var(--theme-cyan); }
+
+        /* --- BLOG POST DETAIL STYLES --- */
+        .post-content-wrap { max-width: 800px; margin: 0 auto; padding: 40px 20px; }
+        .post-content img { width: 100%; border-radius: 12px; margin-bottom: 2rem; }
+        .post-content h2 { color: #fff; font-size: 2rem; margin: 2.5rem 0 1rem; font-weight: 700; }
+        .post-content p { color: var(--text-slate); font-size: 1.1rem; line-height: 1.8; margin-bottom: 1.5rem; }
+        .post-content blockquote {
+            border-left: 4px solid var(--theme-purple); padding-left: 20px; margin: 2rem 0;
+            font-size: 1.25rem; font-style: italic; color: #fff;
+        }
+        .author-meta { display: flex; gap: 20px; justify-content: center; margin-top: 20px; color: var(--text-slate); }
+        .author-meta i { color: var(--theme-cyan); margin-right: 5px; }
+
+        .button-02-text {
+            display: inline-flex; align-items: center; gap: 8px; background: transparent;
+            color: var(--theme-cyan); font-weight: 600; text-decoration: none; font-size: 0.9rem;
+            transition: 0.3s; padding: 0; border: none;
+        }
+        .button-02-text:hover { gap: 15px; color: #fff; }
+
+        /* --- RELATED POSTS STYLES --- */
+        .related-section { padding: 80px 0 100px; border-top: 1px solid rgba(255,255,255,0.05); }
+        .container { max-width: var(--spacing-container); margin: 0 auto; padding: 0 20px; }
+        .related-title { font-size: 2rem; font-weight: 700; color: #fff; margin-bottom: 40px; }
+        .related-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
+        .related-card { background: var(--card-bg); border-radius: 12px; overflow: hidden; border: 1px solid rgba(255,255,255,0.05); transition: 0.3s; text-decoration: none; display: block; }
+        .related-card:hover { transform: translateY(-5px); border-color: var(--theme-cyan); box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        .related-img { height: 200px; width: 100%; object-fit: cover; }
+        .related-info { padding: 20px; }
+        .related-cat { color: var(--theme-cyan); font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; display: block; }
+        .related-card h4 { color: #fff; font-size: 1.2rem; font-weight: 600; line-height: 1.4; margin: 0; }
+
+        /* --- FOOTER STYLES (Matching Index) --- */
+        footer { background-color: var(--bg-color); border-top: 1px solid rgba(255,255,255,0.05); padding: 60px 0 20px; }
+        .footer__container { display: grid; gap: 4rem 2rem; max-width: 1400px; margin: 0 auto; padding: 0 30px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+        
+        @media (min-width: 768px) {
+            .footer__container { grid-template-columns: repeat(4, 1fr); }
+            .footer__col:nth-child(1) { grid-column: 1 / 2; }
+        }
+
+        .footer__logo { margin-bottom: 2rem; }
+        .footer__logo a { font-size: 1.25rem; font-weight: 800; color: var(--text-dark); text-decoration: none; }
+        .footer__logo span { color: var(--theme-cyan); }
+        
+        .section__description { margin-bottom: 2rem; text-align: left; color: var(--text-slate); font-size: 0.95rem; line-height: 1.6; }
+        
+        .footer__col h3, .footer__col h4 { margin-bottom: 1rem; font-size: 1.25rem; font-weight: 700; color: var(--text-dark); }
+        
+        .footer__socials { display: flex; align-items: center; gap: 0.5rem; list-style: none; }
+        .footer__socials a { padding: 8px 10px; font-size: 1.25rem; color: var(--secondary-color); border: 1px solid var(--secondary-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: 0.3s; text-decoration: none; }
+        .footer__socials a:hover { color: var(--text-white); background-color: var(--secondary-color); }
+        
+        .footer__links { display: grid; gap: 1rem; list-style: none; }
+        .footer__links a { font-size: 1rem; font-weight: 500; color: var(--text-slate); text-decoration: none; transition: 0.3s; }
+        .footer__links a:hover { color: var(--secondary-color); }
+        .footer__links a span { margin-right: 0.5rem; font-size: 1.25rem; color: var(--secondary-color); }
+        
+        .footer__bar { background-color: var(--bg-color); padding: 1rem; font-size: 1rem; font-weight: 500; color: var(--text-slate); text-align: center; margin-top: 4rem; border-top: 1px solid rgba(255,255,255,0.05); }
+
+
+        /* --- RESPONSIVE --- */
+        @media (max-width: 768px) {
+            .nav__links { display: none; } 
+            .hero-title { font-size: 3rem; }
+            .dimensional-container { grid-template-columns: 1fr; }
+            .footer__container { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="loader"><div id="loader-inner"></div></div>
+    <div class="cursor-dot"></div>
+    <div class="cursor-outline"></div>
+
+    <nav class="site-nav">
+        <div class="nav-inner">
+            <div class="nav__logo"><h1><a href="index.html">DigiWeb<span>Now</span></a></h1></div>
+            <ul class="nav__links">
+                <a href="index.html">Home</a>
+                <a href="blog.html">Back to Blog</a>
+            </ul>
+            <button class="contact-btn" onclick="window.location.href='index.html#contact-area'">Contact Us</button>
+        </div>
+    </nav>
+
+    <div id="main">
+
+        <!-- Dynamic Header -->
+        <header class="page-header" data-scroll-section>
+            <div class="container">
+                <span id="postCategory" style="text-transform: uppercase; font-weight: 700; letter-spacing: 2px; font-size: 0.9rem;">Category</span>
+                <h1 id="postTitle">Loading Post...</h1>
+                <div class="author-meta">
+                    <span><i class="ri-user-line"></i> <span id="postAuthor">Admin</span></span>
+                    <span><i class="ri-calendar-line"></i> <span id="postDate">...</span></span>
+                    <span><i class="ri-time-line"></i> <span id="postReadTime">5 min read</span></span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Post Content -->
+        <article class="post-content-wrap" data-scroll-section>
+            <div class="post-content">
+                <!-- Main Image -->
+                <img id="postImage" src="" alt="Blog Image">
+                
+                <!-- Dynamic Body Container -->
+                <div id="postBody">
+                    <!-- Content injected via JS -->
+                </div>
+                
+                <div style="margin-top: 60px; padding-top: 40px; border-top: 1px solid rgba(255,255,255,0.1);">
+                    <a href="blog.html" class="button-02-text"><i class="ri-arrow-left-line"></i> Back to All Articles</a>
+                </div>
+            </div>
+        </article>
+
+        <!-- Related Posts Section (NEW) -->
+        <section class="related-section" data-scroll-section>
+            <div class="container">
+                <h3 class="related-title">Read Next</h3>
+                <div class="related-grid" id="relatedPostsGrid">
+                    <!-- Injected via JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer data-scroll-section>
+            <div class="section__container footer__container">
+                <div class="footer__col">
+                    <div class="footer__logo">
+                        <a href="#">DIGIWEB<span>NOW</span></a>
+                    </div>
+                    <p class="section__description">
+                       DIGIWEBNOW is a creative digital agency dedicated to delivering innovative solutions. 
+                    </p>
+                    <h3>Follow Us</h3>   
+                    <ul class="footer__socials">
+                        <li><a href="#"><i class="ri-facebook-fill"></i></a></li>
+                        <li><a href="#"><i class="ri-twitter-fill"></i></a></li>
+                        <li><a href="#"><i class="ri-instagram-fill"></i></a></li>
+                        <li><a href="#"><i class="ri-behance-fill"></i></a></li>
+                        <li><a href="#"><i class="ri-youtube-fill"></i></a></li>
+                    </ul>
+                </div>
+                <div class="footer__col">
+                    <h4>Quick Links</h4>
+                    <ul class="footer__links">
+                        <li><a href="#">About DIGIWEBNOW</a></li>
+                        <li><a href="#">Latest News & Blogs</a></li>
+                        <li><a href="#">Terms of Users</a></li>
+                        <li><a href="#">Our Services</a></li>
+                        <li><a href="#">Need a Career?</a></li>
+                    </ul>
+                </div>
+                <div class="footer__col">
+                    <h4>Support</h4>
+                    <ul class="footer__links">
+                        <li><a href="#">Help Center</a></li>
+                        <li><a href="#">FAQs</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Report an Issue</a></li>
+                        <li><a href="#">Get a Quote</a></li>
+                    </ul>
+                </div>
+                <div class="footer__col">
+                    <h4>Contact Us</h4>
+                    <ul class="footer__links">
+                        <li><a href="#d">
+                          <span><i class="ri-phone-fill"></i></span> +91 0987654321
+                        </a>
+                    </li>
+                        <li><a href="#">
+                            <span><i class="ri-mail-fill"></i></span> info@digiwebnow.com
+                        </a>
+                    </li>
+                        <li><a href="#">
+                            <span><i class="ri-map-pin-fill"></i></span>  2456 Royal In. Delhi
+                        </a>
+                    </li>
+                    </ul>
+                 </div>
+            </div>
+            <div class="footer__bar">
+               Copyright © 2025 DIGIWEBNOW. All rights reserved.
+            </div>
+        </footer>
+
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/locomotive-scroll@3.5.4/dist/locomotive-scroll.min.js"></script>
+
+    <!-- Embedded Scripts -->
+    <script>
+        // 1. REGISTER GSAP
+        gsap.registerPlugin(ScrollTrigger);
+
+        // --- LOCOMOTIVE SCROLL ---
+        let locoScroll;
+        function initLocomotiveScroll() {
+            const scrollEl = document.querySelector("#main");
+            if (!scrollEl) return;
+
+            locoScroll = new LocomotiveScroll({
+                el: scrollEl,
+                smooth: true,
+                tablet: { smooth: true },
+                smartphone: { smooth: true }
+            });
+
+            locoScroll.on("scroll", ScrollTrigger.update);
+
+            ScrollTrigger.scrollerProxy("#main", {
+                scrollTop(value) {
+                    return arguments.length ? locoScroll.scrollTo(value, 0, 0) : locoScroll.scroll.instance.scroll.y;
+                },
+                getBoundingClientRect() {
+                    return { top: 0, left: 0, width: window.innerWidth, height: window.innerHeight };
+                },
+                pinType: "transform"
+            });
+
+            ScrollTrigger.addEventListener("refresh", () => locoScroll.update());
+            ScrollTrigger.defaults({ scroller: "#main" });
+        }
+
+        // --- CURSOR LOGIC ---
+        function initCursor() {
+            const dot = document.querySelector(".cursor-dot");
+            const out = document.querySelector(".cursor-outline");
+            if (!dot || !out) return;
+
+            window.addEventListener("mousemove", (e) => {
+                const x = e.clientX;
+                const y = e.clientY;
+                dot.style.left = `${x}px`;
+                dot.style.top = `${y}px`;
+                out.animate({ left: `${x}px`, top: `${y}px` }, { duration: 500, fill: "forwards" });
+            });
+        }
+
+        // --- INITIALIZATION ---
+        window.addEventListener("load", () => {
+            initCursor();
+
+            // Loader Exit Animation
+            const tl = gsap.timeline();
+            tl.to("#loader-inner", { height: "100vh", width: "100vw", borderRadius: 0, duration: 0.8, ease: "power4.inOut" })
+            .to("#loader", { opacity: 0, duration: 0.5, onComplete: () => document.getElementById('loader').style.display = 'none' })
+            .to("nav, #main", { opacity: 1, duration: 0.5 });
+
+            // Init Scroll
+            setTimeout(() => {
+                initLocomotiveScroll();
+                ScrollTrigger.refresh();
+            }, 100);
+        });
+
+        // --- LOAD SPECIFIC POST DATA (CONNECTED TO ADMIN PANEL) ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const params = new URLSearchParams(window.location.search);
+            const id = parseInt(params.get('id'));
+            
+            // Default Fallback Data (In case Admin Data is empty)
+            const DEFAULTS_LOCAL = [
+                { id: 1, category: "Design", date: "Oct 24, 2025", image: "https://images.unsplash.com/photo-1561070791-2526d30994b5", title: "Design Trends of 2025", excerpt: "Explore how minimalism, AI-driven design, and immersive storytelling will shape the digital landscape." },
+                { id: 2, category: "Branding", date: "Oct 18, 2025", image: "https://images.unsplash.com/photo-1600607686527-6fb886090705", title: "Why Branding Matters", excerpt: "Learn why consistent branding is essential for creating trust, loyalty and recognition." },
+                { id: 3, category: "Tech", date: "Oct 12, 2025", image: "https://images.unsplash.com/photo-1519389950473-47ba0277781c", title: "Future of UX/UI", excerpt: "Discover how user-centered design is evolving with Neural Interfaces." },
+                { id: 4, category: "Marketing", date: "Sep 28, 2025", image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f", title: "The Top 5 SEO Secrets", excerpt: "Uncover the advanced strategies experts use to dominate search engine results." }
+            ];
+
+            // Source of Truth for ALL posts
+            let allPosts = DEFAULTS_LOCAL;
+
+            // Check Local Storage override (CONNECTS TO ADMIN PANEL)
+            const stored = localStorage.getItem('DIGIWEB_BLOG_DATA');
+            if(stored) {
+                try { 
+                    const parsed = JSON.parse(stored);
+                    if(parsed.length > 0) allPosts = parsed;
+                } catch(e) {}
+            }
+
+            // Find current post
+            const post = allPosts.find(p => p.id === id);
+
+            if (post) {
+                // 1. Basic Info
+                document.title = post.title + " - DigiWebNow";
+                document.getElementById('postTitle').textContent = post.title;
+                document.getElementById('postCategory').textContent = post.category;
+                document.getElementById('postDate').textContent = post.date;
+                document.getElementById('postImage').src = post.image;
+                
+                // 2. Load Detailed Content from Admin Panel 'details' object
+                const d = post.details || {};
+                
+                // Overrides if present in details
+                if(d.bannerTitle) document.getElementById('postTitle').textContent = d.bannerTitle;
+                if(d.date) document.getElementById('postDate').textContent = d.date;
+                if(d.author) document.getElementById('postAuthor').textContent = d.author;
+                if(d.readTime) document.getElementById('postReadTime').textContent = d.readTime;
+                if(d.mainImg) document.getElementById('postImage').src = d.mainImg;
+
+                // Build Body HTML
+                let bodyHtml = '';
+                
+                // Intro
+                if(d.intro) bodyHtml += `<p class="lead" style="font-size: 1.25rem; color: #fff; margin-bottom: 2rem; border-left: 2px solid var(--theme-cyan); padding-left: 1rem;">${d.intro}</p>`;
+                else if(post.excerpt) bodyHtml += `<p class="lead" style="font-size: 1.25rem; color: #fff; margin-bottom: 2rem;">${post.excerpt}</p>`;
+                
+                // Section 1
+                if(d.h2_1) bodyHtml += `<h2>${d.h2_1}</h2>`;
+                if(d.p_1) bodyHtml += `<p>${d.p_1}</p>`;
+                if(d.p_2) bodyHtml += `<p>${d.p_2}</p>`;
+                
+                // Quote
+                if(d.quote) bodyHtml += `<blockquote>"${d.quote}"</blockquote>`;
+                
+                // Section 2
+                if(d.h2_2) bodyHtml += `<h2>${d.h2_2}</h2>`;
+                if(d.p_3) bodyHtml += `<p>${d.p_3}</p>`;
+                if(d.p_4) bodyHtml += `<p>${d.p_4}</p>`;
+
+                // Section 3
+                if(d.h2_3) bodyHtml += `<h2>${d.h2_3}</h2>`;
+                if(d.p_5) bodyHtml += `<p>${d.p_5}</p>`;
+                
+                // Conclusion
+                if(d.conclusion) bodyHtml += `<div style="margin-top:30px; padding:25px; background:rgba(255,255,255,0.05); border-radius:12px; border: 1px solid rgba(255,255,255,0.1);"><h3 style="color:#fff; margin-top:0;">Conclusion</h3><p style="margin-bottom:0;">${d.conclusion}</p></div>`;
+
+                // If no details exist, show default placeholder text
+                if(!bodyHtml && !d.intro) {
+                    bodyHtml = `
+                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+                        <h2>Key Takeaways</h2>
+                        <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                        <blockquote>"Design is not just what it looks like and feels like. Design is how it works."</blockquote>
+                        <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.</p>
+                    `;
+                }
+
+                document.getElementById('postBody').innerHTML = bodyHtml;
+
+                // --- 3. RELATED POSTS LOGIC ---
+                // Filter out current post, take top 3
+                const related = allPosts.filter(p => p.id !== id).slice(0, 3);
+                const relatedGrid = document.getElementById('relatedPostsGrid');
+
+                if (relatedGrid) {
+                    relatedGrid.innerHTML = related.map(p => `
+                        <a href="blog-post.html?id=${p.id}" class="related-card">
+                            <img src="${p.image}" alt="${p.title}" class="related-img">
+                            <div class="related-info">
+                                <span class="related-cat">${p.category}</span>
+                                <h4>${p.title}</h4>
+                            </div>
+                        </a>
+                    `).join('');
+                }
+
+            } else {
+                document.getElementById('postTitle').textContent = "Post Not Found";
+                document.getElementById('postBody').innerHTML = "<p>The requested article could not be found.</p>";
+                document.getElementById('postImage').style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>

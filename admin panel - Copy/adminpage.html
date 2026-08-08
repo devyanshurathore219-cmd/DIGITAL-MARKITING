@@ -1,0 +1,1396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DigiWeb Admin Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.css" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #0f172a; color: #f8fafc; }
+        
+        /* Sidebar */
+        .sidebar { width: 260px; background: #020617; border-right: 1px solid #1e293b; height: 100vh; position: fixed; top: 0; left: 0; z-index: 50; display: flex; flex-direction: column; }
+        .nav-item { display: flex; items-center; gap: 12px; padding: 12px 20px; color: #94a3b8; font-weight: 500; transition: all 0.2s; cursor: pointer; border-left: 3px solid transparent; }
+        .nav-item:hover { background: #1e293b; color: white; }
+        .nav-item.active { background: #1e293b; color: #38bdf8; border-left-color: #38bdf8; }
+        
+        /* Content */
+        .main-content { margin-left: 260px; padding: 32px; min-height: 100vh; }
+        
+        /* Forms */
+        .card { background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 24px; margin-bottom: 24px; }
+        .input-group { margin-bottom: 1rem; }
+        .input-group label { display: block; font-size: 0.85rem; color: #94a3b8; margin-bottom: 6px; }
+        .input-field { width: 100%; background: #0f172a; border: 1px solid #334155; color: white; padding: 10px 14px; border-radius: 8px; outline: none; transition: border-color 0.2s; font-size: 0.95rem; }
+        .input-field:focus { border-color: #38bdf8; }
+        .checkbox-group { display: flex; items: center; gap: 10px; margin-top: 10px; }
+        
+        /* Lists */
+        .item-row { display: flex; align-items: center; justify-content: space-between; background: #0f172a; padding: 16px; border-radius: 8px; border: 1px solid #334155; margin-bottom: 10px; }
+        .section-divider { border-top: 1px solid #334155; margin: 2rem 0 1rem 0; padding-top: 1rem; font-weight: bold; color: #38bdf8; }
+
+        /* Blog Editor Styles */
+        .editor-mode { display: none; }
+        .editor-mode.active { display: block; }
+        .list-mode { display: block; }
+        .list-mode.hidden { display: none; }
+
+        @media(max-width: 1024px) {
+            .sidebar { transform: translateX(-100%); transition: transform 0.3s; }
+            .sidebar.open { transform: translateX(0); }
+            .main-content { margin-left: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="p-6 border-b border-slate-800 flex items-center gap-3">
+            <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold">D</div>
+            <h1 class="font-bold text-xl tracking-tight">DigiWeb<span class="text-blue-400">Admin</span></h1>
+        </div>
+        
+        <nav class="flex-1 overflow-y-auto py-4">
+            <div class="px-6 text-xs font-semibold text-slate-500 uppercase mb-2">Home Page</div>
+            <div class="nav-item active" onclick="showSection('hero')">
+                <i class="ri-layout-top-line text-lg"></i> Hero Section
+            </div>
+            <div class="nav-item" onclick="showSection('home-blog')">
+                <i class="ri-star-line text-lg"></i> Blog Selector
+            </div>
+            <div class="nav-item" onclick="showSection('services')">
+                <i class="ri-service-line text-lg"></i> Services List
+            </div>
+            <div class="nav-item" onclick="showSection('ticker')">
+                <i class="ri-infinite-loop-line text-lg"></i> Logo Ticker
+            </div>
+            <div class="nav-item" onclick="showSection('about')">
+                <i class="ri-team-line text-lg"></i> About Us
+            </div>
+            <div class="nav-item" onclick="showSection('portfolio')">
+                <i class="ri-grid-fill text-lg"></i> Portfolio List
+            </div>
+
+            <!-- Blog Content Management (CONSOLIDATED) -->
+            <div class="px-6 text-xs font-semibold text-slate-500 uppercase mb-2 mt-4">Blog System</div>
+            <div class="nav-item" onclick="showSection('blog')">
+                <i class="ri-article-line text-lg"></i> Manage Master Blog
+            </div>
+            
+            <div class="px-6 text-xs font-semibold text-slate-500 uppercase mb-2 mt-4">Static Pages</div>
+            <div class="nav-item" onclick="showSection('proj-detail-1')">
+                <i class="ri-file-list-3-line text-lg"></i> Page: Mono & Motion
+            </div>
+            <div class="nav-item" onclick="showSection('proj-detail-2')">
+                <i class="ri-layout-masonry-line text-lg"></i> Page: Zero Studio
+            </div>
+            <div class="nav-item" onclick="showSection('proj-detail-3')">
+                <i class="ri-bar-chart-grouped-line text-lg"></i> Page: Digital Marketing
+            </div>
+            <div class="nav-item" onclick="showSection('proj-detail-4')">
+                <i class="ri-pie-chart-2-line text-lg"></i> Page: Marketing Research
+            </div>
+        </nav>
+
+        <div class="p-4 border-t border-slate-800">
+            <a href="index.html" target="_blank" class="flex items-center justify-center gap-2 w-full bg-blue-600 hover:bg-blue-500 text-white py-2.5 rounded-lg font-medium transition">
+                View Live Site <i class="ri-external-link-line"></i>
+            </a>
+            <button onclick="resetDefaults()" class="mt-3 w-full text-sm text-red-400 hover:text-red-300">
+                Reset All Data
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Header -->
+        <header class="flex justify-between items-center mb-8">
+            <div class="lg:hidden p-2 bg-slate-800 rounded cursor-pointer" onclick="toggleSidebar()">
+                <i class="ri-menu-line text-white"></i>
+            </div>
+            <h2 id="page-title" class="text-2xl font-bold">Admin Dashboard</h2>
+        </header>
+
+        <!-- === HERO SECTION === -->
+        <section id="sec-hero" class="content-section">
+            <h3 class="font-bold text-xl mb-6">Hero Slides</h3>
+            <div class="grid lg:grid-cols-3 gap-8">
+                <!-- Form -->
+                <div class="lg:col-span-1">
+                    <div class="card sticky top-8">
+                        <h3 class="font-bold text-lg mb-4 flex items-center gap-2">
+                            <i class="ri-edit-circle-line text-blue-400"></i> <span id="hero-mode">Add Slide</span>
+                        </h3>
+                        <form id="heroForm" class="space-y-4">
+                            <input type="hidden" id="heroId">
+                            <div class="input-group"><label>Title</label><input type="text" id="heroTitle" class="input-field" required></div>
+                            <div class="input-group"><label>Subtitle</label><input type="text" id="heroSubtitle" class="input-field"></div>
+                            <div class="input-group"><label>Description</label><textarea id="heroDesc" rows="3" class="input-field"></textarea></div>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div class="input-group"><label>Start Color</label><input type="color" id="heroColor1" class="h-10 w-full rounded"></div>
+                                <div class="input-group"><label>End Color</label><input type="color" id="heroColor2" class="h-10 w-full rounded"></div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div class="input-group"><label>Icon</label><input type="text" id="heroIcon" class="input-field" placeholder="ri-code-line"></div>
+                                <div class="input-group"><label>Stat</label><input type="text" id="heroStat" class="input-field" placeholder="99% Uptime"></div>
+                            </div>
+                            <div class="input-group"><label>Image URL</label><input type="text" id="heroImage" class="input-field"></div>
+                            <div class="input-group"><label>Tech Tags</label><input type="text" id="heroTech" class="input-field"></div>
+                            
+                            <div class="flex gap-2 pt-2">
+                                <button type="submit" class="flex-1 bg-blue-600 hover:bg-blue-500 text-white py-2 rounded-lg">Save</button>
+                                <button type="button" onclick="resetHeroForm()" class="px-4 py-2 border border-slate-600 rounded-lg text-slate-400">Clear</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <!-- List -->
+                <div class="lg:col-span-2">
+                    <div id="heroList" class="flex flex-col gap-3"></div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- === SERVICES SECTION (NEW) === -->
+        <section id="sec-services" class="content-section hidden">
+            <div class="grid lg:grid-cols-3 gap-8">
+                <!-- Form -->
+                <div class="lg:col-span-1">
+                    <div class="card sticky top-8">
+                        <h3 class="font-bold text-lg mb-4 flex items-center gap-2">
+                            <i class="ri-service-line text-cyan-400"></i> <span id="service-mode">Add Service</span>
+                        </h3>
+                        <form id="serviceForm" class="space-y-4">
+                            <input type="hidden" id="serviceIndex">
+                            
+                            <div class="input-group">
+                                <label>Service Title</label>
+                                <input type="text" id="serviceTitle" class="input-field" required placeholder="e.g. Web Development">
+                            </div>
+                            
+                            <div class="input-group">
+                                <label>Description</label>
+                                <textarea id="serviceDesc" rows="3" class="input-field" required placeholder="Description of the service..."></textarea>
+                            </div>
+                            
+                            <div class="input-group">
+                                <label>Icon Class (RemixIcon)</label>
+                                <input type="text" id="serviceIcon" class="input-field" placeholder="e.g. ri-code-line">
+                            </div>
+                            
+                            <div class="input-group">
+                                <label>Image URL (Visual Preview)</label>
+                                <input type="text" id="serviceImg" class="input-field" placeholder="https://...">
+                            </div>
+                            
+                            <div class="flex gap-2 pt-2">
+                                <button type="submit" class="flex-1 bg-cyan-600 hover:bg-cyan-500 text-white py-2 rounded-lg">Save Service</button>
+                                <button type="button" onclick="resetServiceForm()" class="px-4 py-2 border border-slate-600 rounded-lg text-slate-400">Clear</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <!-- List -->
+                <div class="lg:col-span-2">
+                    <div class="flex justify-between items-center mb-4">
+                        <h4 class="font-bold text-slate-300">Active Services</h4>
+                        <span class="text-xs text-slate-500">Items display in this order</span>
+                    </div>
+                    <div id="serviceList" class="flex flex-col gap-3">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- === HOME PAGE BLOG SELECTOR === -->
+        <section id="sec-home-blog" class="content-section hidden">
+            <div class="mb-6">
+                <h3 class="font-bold text-lg">Home Page Blog Cards</h3>
+                <p class="text-slate-400 text-sm">Select exactly which posts appear on the home page (Limit to 3 for best layout).</p>
+            </div>
+            <div class="grid lg:grid-cols-2 gap-8">
+                <!-- Selected Column -->
+                <div>
+                    <h4 class="font-bold text-green-400 mb-4 flex items-center gap-2">
+                        <i class="ri-check-double-line"></i> Shown on Home Page
+                    </h4>
+                    <div id="homeBlogSelected" class="flex flex-col gap-3 min-h-[200px] bg-slate-900/50 p-4 rounded-xl border border-dashed border-slate-700"></div>
+                </div>
+                <!-- Available Column -->
+                <div>
+                    <h4 class="font-bold text-slate-400 mb-4 flex items-center gap-2">
+                        <i class="ri-archive-line"></i> Available Posts
+                    </h4>
+                    <div id="homeBlogAvailable" class="flex flex-col gap-3 min-h-[200px] bg-slate-900/50 p-4 rounded-xl border border-dashed border-slate-700"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- === TICKER SECTION === -->
+        <section id="sec-ticker" class="content-section hidden">
+            <div class="grid lg:grid-cols-3 gap-8">
+                <div class="lg:col-span-1">
+                    <div class="card sticky top-8">
+                        <h3 class="font-bold text-lg mb-4">Add Logo</h3>
+                        <form id="tickerForm" class="space-y-4">
+                            <div class="input-group"><label>Logo URL</label><input type="text" id="tickerUrl" class="input-field" required></div>
+                            <div class="input-group"><label>Name</label><input type="text" id="tickerAlt" class="input-field" required></div>
+                            <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white py-2 rounded-lg mt-2">Add</button>
+                        </form>
+                    </div>
+                </div>
+                <div class="lg:col-span-2">
+                    <div id="tickerList" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- === ABOUT SECTION === -->
+        <section id="sec-about" class="content-section hidden">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="font-bold text-lg">About Content</h3>
+                <button onclick="saveAbout()" class="bg-green-600 hover:bg-green-500 text-white px-6 py-2 rounded-lg">Save Changes</button>
+            </div>
+            <div class="grid lg:grid-cols-3 gap-6">
+                <div class="card">
+                    <h4 class="font-bold mb-4 text-blue-400">Mission</h4>
+                    <textarea id="misTitle" rows="3" class="input-field mb-2"></textarea>
+                    <textarea id="misDesc" rows="4" class="input-field mb-2"></textarea>
+                    <div class="grid grid-cols-2 gap-2 mb-2"><input id="misStat1Num" class="input-field"><input id="misStat1Txt" class="input-field"></div>
+                    <div class="grid grid-cols-2 gap-2 mb-2"><input id="misStat2Num" class="input-field"><input id="misStat2Txt" class="input-field"></div>
+                    <input id="misImg" class="input-field" placeholder="Image URL">
+                </div>
+                <div class="card">
+                    <h4 class="font-bold mb-4 text-purple-400">Stack</h4>
+                    <textarea id="stkTitle" rows="3" class="input-field mb-2"></textarea>
+                    <textarea id="stkDesc" rows="4" class="input-field mb-2"></textarea>
+                    <input id="stkImg" class="input-field" placeholder="Image URL">
+                </div>
+                <div class="card">
+                    <h4 class="font-bold mb-4 text-orange-400">Vision</h4>
+                    <textarea id="visTitle" rows="3" class="input-field mb-2"></textarea>
+                    <textarea id="visDesc" rows="4" class="input-field mb-2"></textarea>
+                    <input id="visImg" class="input-field" placeholder="Image URL">
+                </div>
+            </div>
+        </section>
+
+        <!-- === PORTFOLIO LIST SECTION === -->
+        <section id="sec-portfolio" class="content-section hidden">
+            <div class="grid lg:grid-cols-3 gap-8">
+                <!-- Form -->
+                <div class="lg:col-span-1">
+                    <div class="card sticky top-8">
+                        <h3 class="font-bold text-lg mb-4 flex items-center gap-2">
+                            <i class="ri-folder-add-line text-blue-400"></i> <span id="proj-mode">Add Project</span>
+                        </h3>
+                        <form id="projForm" class="space-y-4">
+                            <input type="hidden" id="projId">
+                            <div class="input-group"><label>Project Title</label><input type="text" id="projTitle" class="input-field" required></div>
+                            <div class="input-group"><label>Category</label><input type="text" id="projCat" class="input-field" placeholder="Website, App..."></div>
+                            <div class="input-group"><label>Subtitle</label><input type="text" id="projSub" class="input-field"></div>
+                            <div class="input-group"><label>Link URL</label><input type="text" id="projLink" class="input-field" placeholder="projectpage1.html"></div>
+                            <div class="input-group"><label>Image URL</label><input type="text" id="projImg" class="input-field"></div>
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="projLarge" class="w-4 h-4 rounded">
+                                <label for="projLarge" style="margin-bottom:0">Is Large Card?</label>
+                            </div>
+                            <div class="flex gap-2 pt-2">
+                                <button type="submit" class="flex-1 bg-blue-600 hover:bg-blue-500 text-white py-2 rounded-lg">Save</button>
+                                <button type="button" onclick="resetProjForm()" class="px-4 py-2 border border-slate-600 rounded-lg text-slate-400">Clear</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <!-- List -->
+                <div class="lg:col-span-2">
+                    <div id="projList" class="flex flex-col gap-3"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- === UNIFIED BLOG SECTION (MANAGE ALL POSTS & CONTENT) === -->
+        <section id="sec-blog" class="content-section hidden">
+            
+            <!-- LIST VIEW (Shows Cards & Add Form) -->
+            <div id="blogListView" class="list-mode">
+                <div class="grid lg:grid-cols-3 gap-8">
+                    <!-- Form (Add New Card) -->
+                    <div class="lg:col-span-1">
+                        <div class="card sticky top-8">
+                            <h3 class="font-bold text-lg mb-4 flex items-center gap-2">
+                                <i class="ri-article-line text-green-400"></i> <span id="blog-mode">Add Blog Card</span>
+                            </h3>
+                            <form id="blogForm" class="space-y-4">
+                                <input type="hidden" id="blogId">
+                                <div class="input-group"><label>Title</label><input type="text" id="blogTitle" class="input-field" required></div>
+                                <div class="grid grid-cols-2 gap-3">
+                                    <div class="input-group"><label>Category</label><input type="text" id="blogCat" class="input-field" placeholder="Design, Tech..."></div>
+                                    <div class="input-group"><label>Date</label><input type="text" id="blogDate" class="input-field" placeholder="Oct 24, 2025"></div>
+                                </div>
+                                <div class="input-group"><label>Excerpt (Short Description)</label><textarea id="blogExcerpt" rows="3" class="input-field"></textarea></div>
+                                
+                                <div class="input-group">
+                                    <label>Link URL (Auto-Generated)</label>
+                                    <input type="text" id="blogLink" class="input-field bg-slate-900 text-slate-500" placeholder="Auto-generated e.g. blog-post.html?id=1">
+                                </div>
+                                <div class="input-group"><label>Image URL</label><input type="text" id="blogImg" class="input-field" placeholder="https://..."></div>
+                                
+                                <div class="flex gap-2 pt-2">
+                                    <button type="submit" class="flex-1 bg-blue-600 hover:bg-blue-500 text-white py-2 rounded-lg">Save Card</button>
+                                    <button type="button" onclick="resetBlogForm()" class="px-4 py-2 border border-slate-600 rounded-lg text-slate-400">Clear</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <!-- List -->
+                    <div class="lg:col-span-2">
+                        <div class="flex justify-between items-center mb-4">
+                            <h4 class="font-bold text-slate-300">All Blog Posts</h4>
+                        </div>
+                        <div id="blogList" class="flex flex-col gap-3">
+                            <!-- JS populates this -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DETAIL EDITOR VIEW (Hidden by default) -->
+            <div id="blogDetailView" class="editor-mode">
+                <div class="flex justify-between items-center mb-6 bg-slate-900 p-4 rounded-xl border border-slate-700 sticky top-0 z-10">
+                    <div>
+                        <h3 class="font-bold text-xl text-white flex items-center gap-2">
+                            <i class="ri-file-edit-line text-blue-400"></i> Editing: <span id="editingPostTitle" class="text-blue-300">Post Title</span>
+                        </h3>
+                        <p class="text-sm text-slate-400">Editing content for Master Page.</p>
+                    </div>
+                    <div class="flex gap-3">
+                        <button onclick="closeBlogDetails()" class="px-4 py-2 border border-slate-600 rounded-lg text-slate-300 hover:bg-slate-800">
+                            Cancel
+                        </button>
+                        <button onclick="saveBlogDetails()" class="bg-green-600 hover:bg-green-500 text-white px-6 py-2 rounded-lg font-bold shadow-lg">
+                            Save Content
+                        </button>
+                    </div>
+                </div>
+
+                <div class="grid lg:grid-cols-3 gap-6">
+                     <!-- Main Content Column -->
+                     <div class="lg:col-span-2 space-y-6">
+                        <!-- Banner & Header -->
+                        <div class="card">
+                            <h4 class="font-bold mb-4 text-purple-400">Page Header</h4>
+                            <div class="input-group"><label>Main Headline</label><input id="detailBannerTitle" class="input-field text-lg font-bold"></div>
+                            <div class="input-group"><label>Subtitle / Intro</label><textarea id="detailBannerSub" rows="2" class="input-field"></textarea></div>
+                            
+                            <div class="grid grid-cols-3 gap-4 mt-2">
+                                <div class="input-group"><label>Author Name</label><input id="detailAuthor" class="input-field"></div>
+                                <div class="input-group"><label>Date String</label><input id="detailDate" class="input-field"></div>
+                                <div class="input-group"><label>Read Time</label><input id="detailReadTime" class="input-field"></div>
+                            </div>
+                        </div>
+
+                        <!-- Article Body -->
+                        <div class="card">
+                            <h4 class="font-bold mb-4 text-green-400">Article Content</h4>
+                            
+                            <div class="input-group border-b border-slate-700 pb-4 mb-4">
+                                <label class="text-green-300">Featured Image URL (Top of Page)</label>
+                                <input id="detailMainImg" class="input-field mb-4">
+                                
+                                <label class="text-green-300">Introduction Paragraph</label>
+                                <textarea id="detailIntro" rows="4" class="input-field"></textarea>
+                            </div>
+
+                            <!-- Section 1 -->
+                            <div class="input-group border-b border-slate-700 pb-4 mb-4">
+                                <label class="text-green-300">Section 1</label>
+                                <input id="detailH2_1" class="input-field mb-2" placeholder="Heading">
+                                <textarea id="detailP_1" rows="3" class="input-field mb-2" placeholder="Paragraph 1"></textarea>
+                                <textarea id="detailP_2" rows="3" class="input-field" placeholder="Paragraph 2"></textarea>
+                            </div>
+
+                            <!-- Quote -->
+                            <div class="input-group border-b border-slate-700 pb-4 mb-4">
+                                <label class="text-yellow-300">Blockquote</label>
+                                <textarea id="detailQuote" rows="2" class="input-field italic"></textarea>
+                            </div>
+
+                            <!-- Section 2 -->
+                            <div class="input-group border-b border-slate-700 pb-4 mb-4">
+                                <label class="text-green-300">Section 2</label>
+                                <input id="detailH2_2" class="input-field mb-2" placeholder="Heading">
+                                <textarea id="detailP_3" rows="3" class="input-field mb-2" placeholder="Paragraph 1"></textarea>
+                                <textarea id="detailP_4" rows="3" class="input-field" placeholder="Paragraph 2"></textarea>
+                            </div>
+
+                            <!-- Section 3 -->
+                            <div class="input-group border-b border-slate-700 pb-4 mb-4">
+                                <label class="text-green-300">Section 3</label>
+                                <input id="detailH2_3" class="input-field mb-2" placeholder="Heading">
+                                <textarea id="detailP_5" rows="3" class="input-field" placeholder="Content"></textarea>
+                            </div>
+
+                             <!-- Conclusion -->
+                             <div class="input-group">
+                                <label class="text-green-300">Conclusion</label>
+                                <textarea id="detailConclusion" rows="3" class="input-field"></textarea>
+                            </div>
+
+                            <!-- Related Posts (New Feature) -->
+                            <div class="input-group border-t border-slate-700 pt-4 mt-4">
+                                <label class="text-blue-300">Related Posts (Comma separated IDs)</label>
+                                <div class="text-xs text-slate-500 mb-2">Click below to add ID, or type manually (e.g. 1, 2). Leave empty for auto-random.</div>
+                                <input id="detailRelatedIds" class="input-field" placeholder="e.g. 16987654321, 16987654322">
+                                
+                                <div class="mt-3 p-3 bg-slate-800 rounded border border-slate-700">
+                                    <div class="text-xs font-bold text-slate-400 mb-2 uppercase">Available Posts (Click to Add ID)</div>
+                                    <div id="availablePostIdsList" class="space-y-1 max-h-[150px] overflow-y-auto pr-2 custom-scrollbar">
+                                        <!-- Populated by JS -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- === PROJECT 1 DETAIL SECTION (Expanded) === -->
+        <section id="sec-proj-detail-1" class="content-section hidden">
+            <div class="flex justify-between items-center mb-6 bg-slate-900 p-4 rounded-xl border border-slate-700 sticky top-0 z-20">
+                <div>
+                    <h3 class="font-bold text-xl flex items-center gap-2"><i class="ri-file-list-3-line text-cyan-400"></i> Edit: Mono & Motion</h3>
+                    <p class="text-sm text-slate-400">Editing content for 'projectpage1.html'</p>
+                </div>
+                <button onclick="saveProjDetail1()" class="bg-cyan-600 hover:bg-cyan-500 text-white px-6 py-2 rounded-lg font-bold shadow-lg">Save Changes</button>
+            </div>
+
+            <div class="grid lg:grid-cols-2 gap-6">
+                
+                <!-- 1. HERO SECTION -->
+                <div class="card">
+                    <h4 class="font-bold mb-4 text-cyan-400 border-b border-slate-700 pb-2">Hero Section</h4>
+                    <div class="input-group"><label>Project Title (Hero)</label><input id="p1Title" class="input-field" placeholder="e.g. Mono & Motion"></div>
+                    <div class="input-group"><label>Subtitle</label><textarea id="p1Sub" rows="2" class="input-field"></textarea></div>
+                    <div class="input-group"><label>Hero Image URL</label><input id="p1HeroImg" class="input-field"></div>
+                </div>
+
+                <!-- 2. KEY STATS -->
+                <div class="card">
+                    <h4 class="font-bold mb-4 text-cyan-400 border-b border-slate-700 pb-2">Key Statistics</h4>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="input-group"><label>Stat 1 Value</label><input id="p1Stat1Val" class="input-field" placeholder="+35%"></div>
+                        <div class="input-group"><label>Stat 1 Label</label><input id="p1Stat1Lbl" class="input-field" placeholder="Engagement Lift"></div>
+                        <div class="input-group"><label>Stat 2 Value</label><input id="p1Stat2Val" class="input-field" placeholder="Webflow"></div>
+                        <div class="input-group"><label>Stat 2 Label</label><input id="p1Stat2Lbl" class="input-field" placeholder="Tech Stack"></div>
+                    </div>
+                </div>
+
+                <!-- 3. THE NARRATIVE -->
+                <div class="card lg:col-span-2">
+                    <h4 class="font-bold mb-4 text-cyan-400 border-b border-slate-700 pb-2">The Narrative Content</h4>
+                    
+                    <div class="grid lg:grid-cols-2 gap-6">
+                        <div>
+                            <div class="input-group"><label>Objective Title</label><input id="p1ObjTitle" class="input-field"></div>
+                            <div class="input-group"><label>Objective Text (Sticky)</label><textarea id="p1ObjText" rows="4" class="input-field"></textarea></div>
+                        </div>
+                        <div class="space-y-4">
+                            <div class="input-group"><label>Part 1 Title</label><input id="p1Part1Title" class="input-field"></div>
+                            <div class="input-group"><label>Part 1 Text</label><textarea id="p1Part1Text" rows="3" class="input-field"></textarea></div>
+                            
+                            <div class="input-group"><label>Part 2 Title</label><input id="p1Part2Title" class="input-field"></div>
+                            <div class="input-group"><label>Part 2 Text</label><textarea id="p1Part2Text" rows="3" class="input-field"></textarea></div>
+                            
+                            <div class="input-group"><label>Part 3 Text (Conclusion)</label><textarea id="p1Part3Text" rows="3" class="input-field"></textarea></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4. VISUALS -->
+                <div class="card">
+                    <h4 class="font-bold mb-4 text-cyan-400 border-b border-slate-700 pb-2">Project Visuals</h4>
+                    <div class="input-group"><label>Mid-Section Image URL</label><input id="p1MidImg" class="input-field"></div>
+                    <div class="input-group"><label>Bottom Visual Breakdown URL</label><input id="p1BotImg" class="input-field"></div>
+                </div>
+
+                <!-- 5. FOOTER / NEXT PROJECT -->
+                <div class="card">
+                    <h4 class="font-bold mb-4 text-cyan-400 border-b border-slate-700 pb-2">Footer: Next Project</h4>
+                    <div class="input-group"><label>Next Project Title</label><input id="p1NextProjTitle" class="input-field" placeholder="e.g. Zero Studio"></div>
+                    <div class="input-group"><label>Next Project Link URL</label><input id="p1NextProjLink" class="input-field" placeholder="e.g. projectpage2.html"></div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- === PROJECT 2 DETAIL SECTION === -->
+        <section id="sec-proj-detail-2" class="content-section hidden">
+            <div class="flex justify-between items-center mb-6 bg-slate-900 p-4 rounded-xl border border-slate-700 sticky top-0 z-20">
+                <div>
+                    <h3 class="font-bold text-xl flex items-center gap-2"><i class="ri-layout-masonry-line text-purple-400"></i> Edit: Zero Studio (Project 2)</h3>
+                    <p class="text-sm text-slate-400">Editing content for 'projectpage2.html'</p>
+                </div>
+                <button onclick="saveProjDetail2()" class="bg-purple-600 hover:bg-purple-500 text-white px-6 py-2 rounded-lg font-bold shadow-lg">Save Changes</button>
+            </div>
+
+            <div class="grid lg:grid-cols-2 gap-6">
+                <!-- Hero -->
+                <div class="card lg:col-span-2">
+                    <h4 class="font-bold mb-4 text-purple-400 border-b border-slate-700 pb-2">Hero Section</h4>
+                    <div class="input-group"><label>Hero Title (Last word gets gradient)</label><input id="p2HeroTitle" class="input-field"></div>
+                    <div class="input-group"><label>Hero Description</label><textarea id="p2HeroDesc" rows="2" class="input-field"></textarea></div>
+                </div>
+
+                <!-- Section 1 -->
+                <div class="card">
+                    <h4 class="font-bold mb-4 text-purple-400 border-b border-slate-700 pb-2">Section 1: Identity</h4>
+                    <div class="input-group"><label>Title</label><input id="p2S1Title" class="input-field"></div>
+                    <div class="input-group"><label>Text Paragraph 1</label><textarea id="p2S1Text1" rows="3" class="input-field"></textarea></div>
+                    <div class="input-group"><label>Text Paragraph 2</label><textarea id="p2S1Text2" rows="3" class="input-field"></textarea></div>
+                    <div class="space-y-2 mt-4">
+                        <label class="text-xs text-slate-500 uppercase font-bold">Slider Images (URLs)</label>
+                        <input id="p2S1Img1" class="input-field" placeholder="Image 1">
+                        <input id="p2S1Img2" class="input-field" placeholder="Image 2">
+                        <input id="p2S1Img3" class="input-field" placeholder="Image 3">
+                    </div>
+                </div>
+
+                <!-- Section 2 -->
+                <div class="card">
+                    <h4 class="font-bold mb-4 text-purple-400 border-b border-slate-700 pb-2">Section 2: Social</h4>
+                    <div class="input-group"><label>Title</label><input id="p2S2Title" class="input-field"></div>
+                    <div class="input-group"><label>Text Paragraph 1</label><textarea id="p2S2Text1" rows="3" class="input-field"></textarea></div>
+                    <div class="input-group"><label>Text Paragraph 2</label><textarea id="p2S2Text2" rows="3" class="input-field"></textarea></div>
+                    <div class="space-y-2 mt-4">
+                        <label class="text-xs text-slate-500 uppercase font-bold">Slider Images (URLs)</label>
+                        <input id="p2S2Img1" class="input-field" placeholder="Image 1">
+                        <input id="p2S2Img2" class="input-field" placeholder="Image 2">
+                        <input id="p2S2Img3" class="input-field" placeholder="Image 3">
+                    </div>
+                </div>
+
+                <!-- Section 3 -->
+                <div class="card lg:col-span-2">
+                    <h4 class="font-bold mb-4 text-purple-400 border-b border-slate-700 pb-2">Section 3: Content</h4>
+                    <div class="grid lg:grid-cols-2 gap-6">
+                        <div>
+                            <div class="input-group"><label>Title</label><input id="p2S3Title" class="input-field"></div>
+                            <div class="input-group"><label>Text Paragraph 1</label><textarea id="p2S3Text1" rows="3" class="input-field"></textarea></div>
+                            <div class="input-group"><label>Text Paragraph 2</label><textarea id="p2S3Text2" rows="3" class="input-field"></textarea></div>
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-xs text-slate-500 uppercase font-bold">Slider Images (URLs)</label>
+                            <input id="p2S3Img1" class="input-field" placeholder="Image 1">
+                            <input id="p2S3Img2" class="input-field" placeholder="Image 2">
+                            <input id="p2S3Img3" class="input-field" placeholder="Image 3">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- === PROJECT 3 DETAIL SECTION (DYNAMIC) === -->
+        <section id="sec-proj-detail-3" class="content-section hidden">
+            <div class="flex justify-between items-center mb-6 bg-slate-900 p-4 rounded-xl border border-slate-700 sticky top-0 z-20">
+                <div>
+                    <h3 class="font-bold text-xl flex items-center gap-2"><i class="ri-bar-chart-grouped-line text-indigo-400"></i> Edit: Digital Marketing</h3>
+                    <p class="text-sm text-slate-400">Editing 'projectpage3.html' (Cards System)</p>
+                </div>
+                <button onclick="saveProjDetail3()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-2 rounded-lg font-bold shadow-lg">Save All Changes</button>
+            </div>
+
+            <div class="grid lg:grid-cols-3 gap-8">
+                
+                <!-- 1. Hero & Config -->
+                <div class="lg:col-span-3 card">
+                    <h4 class="font-bold mb-4 text-indigo-400 border-b border-slate-700 pb-2">Hero Section</h4>
+                    <div class="grid lg:grid-cols-2 gap-4">
+                        <div class="input-group"><label>Hero Top Word (White)</label><input id="p3HeroTitle1" class="input-field" placeholder="Amplify"></div>
+                        <div class="input-group"><label>Hero Bottom Word (Gradient)</label><input id="p3HeroTitle2" class="input-field" placeholder="Your Reach"></div>
+                    </div>
+                    <div class="input-group"><label>Hero Description</label><textarea id="p3HeroDesc" rows="2" class="input-field"></textarea></div>
+                </div>
+
+                <!-- 2. ADD/EDIT CARD FORM -->
+                <div class="lg:col-span-1">
+                    <div class="card sticky top-8">
+                        <h3 class="font-bold text-lg mb-4 flex items-center gap-2">
+                            <i class="ri-add-circle-line text-indigo-400"></i> <span id="p3-card-mode">Add New Card</span>
+                        </h3>
+                        <form id="p3CardForm" class="space-y-3">
+                            <input type="hidden" id="p3CardId">
+                            
+                            <div class="input-group">
+                                <label>Card Type (Visual Style)</label>
+                                <select id="p3CardType" class="input-field bg-slate-900">
+                                    <option value="standard">Standard (Title + Desc)</option>
+                                    <option value="seo">SEO (Search Bar Graphic)</option>
+                                    <option value="ppc">PPC (Bar Graph Animation)</option>
+                                    <option value="smm">SMM (Social Mockups)</option>
+                                    <option value="analytics">Analytics (Big Stat)</option>
+                                    <option value="content">Content (Standard)</option>
+                                </select>
+                            </div>
+
+                            <div class="input-group"><label>Tag (Top Label)</label><input id="p3CardTag" class="input-field" placeholder="e.g. SEO, PPC"></div>
+                            <div class="input-group"><label>Title</label><input id="p3CardTitle" class="input-field" required></div>
+                            <div class="input-group"><label>Description</label><textarea id="p3CardDesc" rows="3" class="input-field"></textarea></div>
+                            
+                            <!-- Analytics Specific -->
+                            <div id="p3StatFields" class="hidden p-3 bg-slate-800 rounded border border-slate-700 mb-3">
+                                <label class="text-xs text-indigo-300 uppercase font-bold mb-2 block">Stat Details</label>
+                                <div class="input-group mb-2"><label>Stat Value</label><input id="p3CardStatVal" class="input-field" placeholder="+210%"></div>
+                                <div class="input-group"><label>Stat Label</label><input id="p3CardStatLbl" class="input-field" placeholder="Growth"></div>
+                            </div>
+
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="p3CardWide" class="w-4 h-4 rounded">
+                                <label for="p3CardWide" style="margin-bottom:0">Wide Card (2 Columns)</label>
+                            </div>
+
+                            <div class="flex gap-2 pt-2">
+                                <button type="submit" class="flex-1 bg-indigo-600 hover:bg-indigo-500 text-white py-2 rounded-lg">Save Card</button>
+                                <button type="button" onclick="resetP3CardForm()" class="px-4 py-2 border border-slate-600 rounded-lg text-slate-400">Clear</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- 3. CARD LIST -->
+                <div class="lg:col-span-2">
+                    <div class="flex justify-between items-center mb-4">
+                        <h4 class="font-bold text-slate-300">Current Cards</h4>
+                        <span class="text-xs text-slate-500">Drag/Drop not implemented (Order by adding)</span>
+                    </div>
+                    <div id="p3CardList" class="grid gap-3">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- === PROJECT 4 DETAIL SECTION (NEW) === -->
+        <section id="sec-proj-detail-4" class="content-section hidden">
+            <div class="flex justify-between items-center mb-6 bg-slate-900 p-4 rounded-xl border border-slate-700 sticky top-0 z-20">
+                <div>
+                    <h3 class="font-bold text-xl flex items-center gap-2"><i class="ri-pie-chart-2-line text-pink-400"></i> Edit: Marketing Research</h3>
+                    <p class="text-sm text-slate-400">Editing 'projectpage4.html'</p>
+                </div>
+                <button onclick="saveProjDetail4()" class="bg-pink-600 hover:bg-pink-500 text-white px-6 py-2 rounded-lg font-bold shadow-lg">Save All Changes</button>
+            </div>
+
+            <div class="grid lg:grid-cols-2 gap-6">
+                
+                <!-- Hero Config -->
+                <div class="card lg:col-span-2">
+                    <h4 class="font-bold mb-4 text-pink-400 border-b border-slate-700 pb-2">Hero Section</h4>
+                    <div class="grid lg:grid-cols-2 gap-4">
+                        <div class="input-group"><label>Hero Start (White)</label><input id="p4HeroStart" class="input-field" placeholder="Find Your"></div>
+                        <div class="input-group"><label>Hero End (Gradient)</label><input id="p4HeroEnd" class="input-field" placeholder="Signal in the Noise"></div>
+                    </div>
+                    <div class="input-group"><label>Hero Description</label><textarea id="p4HeroDesc" rows="2" class="input-field"></textarea></div>
+                </div>
+
+                <!-- Main Bento Cards -->
+                <div class="card lg:col-span-2">
+                    <h4 class="font-bold mb-4 text-pink-400 border-b border-slate-700 pb-2">Main Bento Grid</h4>
+                    <div class="grid lg:grid-cols-2 gap-4">
+                        <div>
+                            <label class="text-xs uppercase text-slate-500 font-bold mb-2 block">Card 1 (Audience)</label>
+                            <input id="p4Bento1Title" class="input-field mb-2" placeholder="Title">
+                            <textarea id="p4Bento1Desc" rows="2" class="input-field" placeholder="Desc"></textarea>
+                        </div>
+                        <div>
+                            <label class="text-xs uppercase text-slate-500 font-bold mb-2 block">Card 2 (Trends)</label>
+                            <input id="p4Bento2Title" class="input-field mb-2" placeholder="Title">
+                            <textarea id="p4Bento2Desc" rows="2" class="input-field" placeholder="Desc"></textarea>
+                        </div>
+                        <div>
+                            <label class="text-xs uppercase text-slate-500 font-bold mb-2 block">Card 3 (Competitor)</label>
+                            <input id="p4Bento3Title" class="input-field mb-2" placeholder="Title">
+                            <textarea id="p4Bento3Desc" rows="2" class="input-field" placeholder="Desc"></textarea>
+                        </div>
+                        <div>
+                            <label class="text-xs uppercase text-slate-500 font-bold mb-2 block">Card 4 (Visualization)</label>
+                            <input id="p4Bento4Title" class="input-field mb-2" placeholder="Title">
+                            <textarea id="p4Bento4Desc" rows="2" class="input-field" placeholder="Desc"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Stats Config -->
+                <div class="card">
+                    <h4 class="font-bold mb-4 text-pink-400 border-b border-slate-700 pb-2">Stats Section</h4>
+                    <div class="space-y-4">
+                        <div class="grid grid-cols-2 gap-2">
+                            <div class="input-group"><label>Stat 1 Value</label><input id="p4Stat1Val" class="input-field" placeholder="90"></div>
+                            <div class="input-group"><label>Stat 1 Label</label><input id="p4Stat1Lbl" class="input-field" placeholder="Label"></div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div class="input-group"><label>Stat 2 Value</label><input id="p4Stat2Val" class="input-field" placeholder="300"></div>
+                            <div class="input-group"><label>Stat 2 Label</label><input id="p4Stat2Lbl" class="input-field" placeholder="Label"></div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div class="input-group"><label>Stat 3 Value</label><input id="p4Stat3Val" class="input-field" placeholder="48"></div>
+                            <div class="input-group"><label>Stat 3 Label</label><input id="p4Stat3Lbl" class="input-field" placeholder="Label"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Process Steps (Dynamic) -->
+                <div class="card lg:col-span-2">
+                    <h4 class="font-bold mb-4 text-pink-400 border-b border-slate-700 pb-2">Process Steps</h4>
+                    <div class="grid lg:grid-cols-2 gap-6">
+                        <!-- Add Form -->
+                        <form id="p4StepForm" class="space-y-3">
+                            <div class="input-group"><label>Step Title</label><input id="p4StepTitle" class="input-field" required placeholder="e.g. 1. Discovery"></div>
+                            <div class="input-group"><label>Step Description</label><textarea id="p4StepDesc" rows="2" class="input-field" placeholder="Description of the step"></textarea></div>
+                            <div class="input-group"><label>Icon (Lucide)</label><input id="p4StepIcon" class="input-field" placeholder="e.g. search, database"></div>
+                            <div class="flex gap-2 pt-2">
+                                <button type="submit" class="flex-1 bg-pink-600 hover:bg-pink-500 text-white py-2 rounded-lg">Add Step</button>
+                            </div>
+                        </form>
+                        <!-- List -->
+                        <div>
+                            <h5 class="text-xs uppercase text-slate-500 font-bold mb-2">Current Steps</h5>
+                            <div id="p4StepList" class="space-y-2 max-h-[300px] overflow-y-auto">
+                                <!-- JS Populated -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- DYNAMIC EXTRA CARDS MANAGER -->
+                <div class="card lg:col-span-2">
+                    <h4 class="font-bold mb-4 text-pink-400 border-b border-slate-700 pb-2">Add Extra Glass Cards</h4>
+                    <div class="grid lg:grid-cols-2 gap-6">
+                        <!-- Form -->
+                        <form id="p4CardForm" class="space-y-3">
+                            <div class="input-group"><label>Icon Name (Lucide)</label><input id="p4CardIcon" class="input-field" placeholder="e.g. star, zap, globe"></div>
+                            <div class="input-group"><label>Title</label><input id="p4CardTitle" class="input-field" required></div>
+                            <div class="input-group"><label>Description</label><textarea id="p4CardDesc" rows="2" class="input-field"></textarea></div>
+                            <div class="flex gap-2 pt-2">
+                                <button type="submit" class="flex-1 bg-pink-600 hover:bg-pink-500 text-white py-2 rounded-lg">Add Card</button>
+                            </div>
+                        </form>
+                        <!-- List -->
+                        <div>
+                            <h5 class="text-xs uppercase text-slate-500 font-bold mb-2">Current Extra Cards</h5>
+                            <div id="p4CardList" class="space-y-2 max-h-[200px] overflow-y-auto">
+                                <!-- JS Populated -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- SCRIPT -->
+    <script>
+        // --- DEFAULTS ---
+        const DEFAULTS = {
+            HERO: [
+                { id: 0, title: "Web Development", subtitle: "Architecting the Digital Future", description: "We build robust, scalable, and lightning-fast web applications.", colors: ["#06b6d4", "#2563eb"], icon: "ri-code-s-slash-line", tech: ["React", "Node.js", "WebGL"], stat: "99.9% Uptime", image: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=2072&auto=format&fit=crop" },
+                { id: 1, title: "Graphic Design", subtitle: "Visuals That Breathe", description: "Forging brand identities that resonate.", colors: ["#a855f7", "#db2777"], icon: "ri-pen-nib-line", tech: ["UI/UX", "Motion", "Branding"], stat: "Award Winning", image: "https://images.unsplash.com/photo-1626785774583-b61d52677109?q=80&w=2071&auto=format&fit=crop" }
+            ],
+            TICKER: [{ src: "images/logos/forbes.svg", alt: "Forbes" }, { src: "images/logos/adweek.svg", alt: "Adweek" }],
+            ABOUT: { mission: { title: 'We are Digital Architects.', desc: 'With over 20 years experience...', stat1Num: "200+", stat1Label: "Projects", stat2Num: "20+", stat2Label: "Years", image: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=800&auto=format&fit=crop" }, stack: { title: 'Powered by Modern Intelligence.', desc: "We don't just write code...", image: "https://images.unsplash.com/photo-1531482615713-2afd69097998?q=80&w=800&auto=format&fit=crop" }, vision: { title: 'Defining the Next Era.', desc: 'The digital world is becoming immersive.', image: "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?q=80&w=1000&auto=format&fit=crop" } },
+            PROJECTS: [
+                { id: 1, title: "Mono & Motion", category: "Website", subtitle: "Design & Dev", isLarge: false, link: "projectpage1.html", image: "images/projects/mono_hero.jpg" },
+                { id: 2, title: "Zero Studio", category: "App", subtitle: "Design & Dev", isLarge: true, link: "projectpage2.html", image: "https://images.unsplash.com/photo-1545239351-ef35f43d514b?q=80&w=1974&auto=format&fit=crop" },
+                { id: 3, title: "Creative Canvas", category: "Design", subtitle: "Branding", isLarge: false, link: "projectpage3.html", image: "https://images.unsplash.com/photo-1561070791-2526d30994b5?q=80&w=1000&auto=format&fit=crop" },
+                { id: 4, title: "Pixel Pioneers", category: "App", subtitle: "UI/UX", isLarge: false, link: "projectpage4.html", image: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=2070&auto=format&fit=crop" }
+            ],
+            SERVICES: [
+                { title: "Web Development", desc: "Scalable, high-performance web applications built with React & Node.js.", icon: "ri-code-s-slash-line", image: "https://images.unsplash.com/photo-1607705703571-c5a8695f18f6?q=80&w=2070&auto=format&fit=crop" },
+                { title: "UI/UX Design", desc: "User-centric interfaces that drive engagement and improve conversion rates.", icon: "ri-pen-nib-line", image: "https://images.unsplash.com/photo-1561070791-2526d30994b5?q=80&w=2000&auto=format&fit=crop" },
+                { title: "Digital Marketing", desc: "Data-driven SEO & PPC strategies to boost your online visibility.", icon: "ri-bar-chart-grouped-line", image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=2015&auto=format&fit=crop" },
+                { title: "E-Commerce", desc: "Secure, optimized online stores built on Shopify and WooCommerce.", icon: "ri-shopping-bag-3-line", image: "https://images.unsplash.com/photo-1556740758-90de374c12ad?q=80&w=1000&auto=format&fit=crop" }
+            ],
+            BLOG: [
+                { id: 1, category: "Design", date: "Oct 24, 2025", image: "https://cdn.prod.website-files.com/68751abd96d2074611f9be95/687fa830bf6c16612accd187_Project%20Image%2002.avif", title: "Design Trends of 2025", excerpt: "Explore how minimalism...", link: "blog-post.html?id=1", featured: true, details: { bannerTitle: "Design Trends of 2025", intro: "The landscape of design is shifting...", h2_1: "1. Minimalism 2.0", p_1: "It's not just about less is more." } },
+                { id: 2, category: "Branding", date: "Oct 18, 2025", image: "https://cdn.prod.website-files.com/68751abd96d2074611f9be95/687fa8955342ad8583494a7b_Project%20Image%2004.avif", title: "Why Branding Matters", excerpt: "Learn why consistent branding...", link: "blog-post.html?id=2", featured: true, details: { bannerTitle: "Why Branding Matters", intro: "Brand is trust." } }
+            ],
+            // Default Project 1 Data
+            PROJ1: {
+                title: "Mono & Motion", subtitle: "A sleek, highly interactive corporate website redesign.",
+                heroImg: "images/projects/mono_hero.jpg",
+                stat1Val: "+35%", stat1Lbl: "Engagement Lift", stat2Val: "Webflow", stat2Lbl: "Tech Stack",
+                objTitle: "The Objective", objText: "Mono & Motion needed a digital presence that was, in itself, a portfolio piece.",
+                part1Title: "Part 1: The Narrative Scroll", part1Text: "We implemented a 'narrative scroll' approach...",
+                part2Title: "Part 2: Visual Identity", part2Text: "The visual identity is anchored in bold minimalism...",
+                part3Text: "The site relaunch resulted in a measurable 35% increase in user engagement.",
+                midImg: "images/projects/mono_mid.jpg",
+                botImg: "images/projects/mono_breakdown.jpg",
+                nextProjTitle: "Zero Studio", nextProjLink: "index.html"
+            },
+            // Default Project 2 Data
+            PROJ2: {
+                heroTitle: "Visual Intelligence", heroDesc: "More than just pretty pictures...",
+                s1Title: "The Art of the Logo", s1Text1: "A logo isn't just a symbol...", s1Text2: "At DigiWebNow, we don't just draw logos...", s1Imgs: ["https://placehold.co/800x1000/111/2FDDCD?text=Logo+1", "https://placehold.co/800x1000/222/2FDDCD?text=Logo+2", "https://placehold.co/800x1000/333/2FDDCD?text=Logo+3"],
+                s2Title: "Social Media Graphics", s2Text1: "In the scroll economy...", s2Text2: "We design cohesive social suites...", s2Imgs: ["https://placehold.co/800x1000/222/fff?text=IG+1", "https://placehold.co/800x1000/333/fff?text=IG+2", "https://placehold.co/800x1000/444/fff?text=IG+3"],
+                s3Title: "High-CTR Thumbnails", s3Text1: "The best video in the world...", s3Text2: "Our thumbnail design strategy...", s3Imgs: ["https://placehold.co/1000x800/333/2FDDCD?text=Thumb+1", "https://placehold.co/1000x800/444/2FDDCD?text=Thumb+2", "https://placehold.co/1000x800/555/2FDDCD?text=Thumb+3"]
+            },
+            // Default Project 3 Data
+            PROJ3: {
+                heroTitle1: "Amplify", heroTitle2: "Your Reach", heroDesc: "We use data-driven strategies and creative execution to connect your brand with the right audience.",
+                cards: [
+                    { id: 'c1', type: 'seo', tag: 'SEO', title: 'Search Engine Optimization', desc: 'Climb the ranks and capture organic traffic. We optimize your site\'s technical foundation and build authoritative backlinks.', wide: true },
+                    { id: 'c2', type: 'ppc', tag: 'PPC', title: 'Paid Advertising', desc: 'Instant visibility. We manage your Google Ads, Meta Ads, and LinkedIn campaigns with a focus on ROI.', wide: false },
+                    { id: 'c3', type: 'smm', tag: 'SMM', title: 'Social Media', desc: 'We build communities, not just follower counts. Engaging content, authentic interaction, and strategic growth.', wide: false },
+                    { id: 'c4', type: 'content', tag: 'Content', title: 'Content Marketing', desc: 'Authoritative blog posts, compelling video scripts, and insightful whitepapers that establish you as an industry leader.', wide: false },
+                    { id: 'c5', type: 'analytics', tag: 'Analytics', title: 'Analytics & Reporting', desc: 'Tracking what matters. We provide clear, actionable reports showing exactly what\'s working.', statVal: '+210%', statLbl: 'Q4 Conversion Lift', wide: false }
+                ]
+            },
+            // Default Project 4 Data
+            PROJ4: {
+                heroStart: "Find Your", heroEnd: "Signal in the Noise", heroDesc: "We don't just find data. We find answers. Our Marketing Research dives deep into audience behavior and market trends.",
+                bento1Title: "Audience Deep-Dive", bento1Desc: "Who are your customers? Really? We go beyond basic demographics to understand motivations.",
+                bento2Title: "Trend Spotting", bento2Desc: "We analyze emerging trends to find your next big opportunity.",
+                bento3Title: "Competitor Intel", bento3Desc: "Know their next move. We dissect competitor strategies so you can win.",
+                bento4Title: "Data Visualization", bento4Desc: "We turn complex findings into clear, beautiful, and actionable dashboards.",
+                stat1Val: "90", stat1Lbl: "Improved Market-Fit",
+                stat2Val: "300", stat2Lbl: "Boost in Qualified Leads",
+                stat3Val: "48", stat3Lbl: "Trend Analysis Turnaround",
+                steps: [
+                    { title: "1. Discovery", desc: "We work with you to define the core questions.", icon: "search" },
+                    { title: "2. Collection", desc: "Using qualitative and quantitative methods to gather raw data.", icon: "database" },
+                    { title: "3. Analysis", desc: "We clean, analyze, and cross-reference data to find patterns.", icon: "filter" },
+                    { title: "4. Strategy", desc: "You get a clear report with actionable recommendations.", icon: "flag" }
+                ],
+                extraCards: []
+            }
+        };
+
+        // --- STATE ---
+        let heroData = [], tickerData = [], aboutData = {}, projectData = [], blogData = [], p1Data = {}, p2Data = {}, p3Data = {}, p4Data = {}, servicesData = [];
+        let editingHeroIndex = null, editingProjIndex = null, editingBlogIndex = null, editingServiceIndex = null;
+        let editingP3CardIndex = null; 
+
+        // --- INIT ---
+        function init() {
+            heroData = load('DIGIWEB_HERO_DATA', DEFAULTS.HERO);
+            tickerData = load('DIGIWEB_TICKER_DATA', DEFAULTS.TICKER);
+            aboutData = load('DIGIWEB_ABOUT_DATA', DEFAULTS.ABOUT);
+            projectData = load('DIGIWEB_PROJECTS', DEFAULTS.PROJECTS);
+            blogData = load('DIGIWEB_BLOG_DATA', DEFAULTS.BLOG); 
+            p1Data = load('DIGIWEB_PROJ_DETAIL_1', DEFAULTS.PROJ1);
+            p2Data = load('DIGIWEB_PROJ_DETAIL_2', DEFAULTS.PROJ2);
+            p3Data = load('DIGIWEB_PROJ_DETAIL_3', DEFAULTS.PROJ3);
+            p4Data = load('DIGIWEB_PROJ_DETAIL_4', DEFAULTS.PROJ4);
+            servicesData = load('DIGIWEB_SERVICES_DATA', DEFAULTS.SERVICES);
+
+            renderHeroList(); renderTickerList(); fillAboutForm(); renderProjectList(); renderBlogList(); renderHomeBlogSelector(); renderServiceList();
+            fillProjDetail1(); 
+            fillProjDetail2();
+            fillProjDetail3();
+            fillProjDetail4();
+        }
+
+        function load(key, defaultVal) {
+            const s = localStorage.getItem(key);
+            try { return JSON.parse(s) || defaultVal; } catch(e) { return defaultVal; }
+        }
+        function save(key, data) { localStorage.setItem(key, JSON.stringify(data)); }
+
+        // --- TABS & SIDEBAR ---
+        function showSection(id) {
+            document.querySelectorAll('.content-section').forEach(el => el.classList.add('hidden'));
+            document.getElementById(`sec-${id}`).classList.remove('hidden');
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+            if(window.innerWidth < 1024) toggleSidebar();
+        }
+        function toggleSidebar() { document.getElementById('sidebar').classList.toggle('open'); }
+
+        // --- HERO, TICKER, ABOUT, PROJECTS ---
+        function renderHeroList() { const c = document.getElementById('heroList'); c.innerHTML = ''; heroData.forEach((item, idx) => { c.innerHTML += `<div class="item-row"><div class="flex items-center gap-4"><div class="w-10 h-10 rounded text-white flex items-center justify-center" style="background: linear-gradient(135deg, ${item.colors[0]}, ${item.colors[1]})"><i class="${item.icon}"></i></div><div><div class="font-bold text-sm">${item.title}</div></div></div><div class="flex gap-2"><button onclick="editHero(${idx})" class="p-2 text-blue-400"><i class="ri-pencil-line"></i></button><button onclick="deleteHero(${idx})" class="p-2 text-red-400"><i class="ri-delete-bin-line"></i></button></div></div>`; }); }
+        function editHero(idx) { const h = heroData[idx]; editingHeroIndex = idx; setVal('heroTitle', h.title); setVal('heroSubtitle', h.subtitle); setVal('heroDesc', h.description); setVal('heroColor1', h.colors[0]); setVal('heroColor2', h.colors[1]); setVal('heroIcon', h.icon); setVal('heroStat', h.stat); setVal('heroImage', h.image); setVal('heroTech', h.tech.join(', ')); }
+        function deleteHero(idx) { if(confirm('Delete?')) { heroData.splice(idx, 1); save('DIGIWEB_HERO_DATA', heroData); renderHeroList(); } }
+        document.getElementById('heroForm').addEventListener('submit', (e) => { e.preventDefault(); const n = { id: Date.now(), title: getVal('heroTitle'), subtitle: getVal('heroSubtitle'), description: getVal('heroDesc'), colors: [getVal('heroColor1'), getVal('heroColor2')], icon: getVal('heroIcon'), stat: getVal('heroStat'), image: getVal('heroImage'), tech: getVal('heroTech').split(',').map(s=>s.trim()) }; if(editingHeroIndex !== null) heroData[editingHeroIndex] = n; else heroData.push(n); save('DIGIWEB_HERO_DATA', heroData); renderHeroList(); document.getElementById('heroForm').reset(); editingHeroIndex=null; alert('Saved!'); });
+        
+        function renderTickerList() { const c = document.getElementById('tickerList'); c.innerHTML = ''; tickerData.forEach((item, idx) => { c.innerHTML += `<div class="bg-slate-800 p-4 rounded relative group"><button onclick="deleteTicker(${idx})" class="absolute top-1 right-1 text-red-400"><i class="ri-close-circle-fill"></i></button><img src="${item.src}" class="h-8 object-contain"><span class="text-xs text-slate-500">${item.alt}</span></div>`; }); }
+        function deleteTicker(idx) { tickerData.splice(idx, 1); save('DIGIWEB_TICKER_DATA', tickerData); renderTickerList(); }
+        document.getElementById('tickerForm').addEventListener('submit', (e) => { e.preventDefault(); tickerData.push({ src: getVal('tickerUrl'), alt: getVal('tickerAlt') }); save('DIGIWEB_TICKER_DATA', tickerData); renderTickerList(); });
+
+        function fillAboutForm() { setVal('misTitle', aboutData.mission.title); setVal('misDesc', aboutData.mission.desc); setVal('misStat1Num', aboutData.mission.stat1Num); setVal('misStat1Txt', aboutData.mission.stat1Label); setVal('misStat2Num', aboutData.mission.stat2Num); setVal('misStat2Txt', aboutData.mission.stat2Label); setVal('misImg', aboutData.mission.image); setVal('stkTitle', aboutData.stack.title); setVal('stkDesc', aboutData.stack.desc); setVal('stkImg', aboutData.stack.image); setVal('visTitle', aboutData.vision.title); setVal('visDesc', aboutData.vision.desc); setVal('visImg', aboutData.vision.image); }
+        function saveAbout() { aboutData = { mission: { title: getVal('misTitle'), desc: getVal('misDesc'), stat1Num: getVal('misStat1Num'), stat1Label: getVal('misStat1Txt'), stat2Num: getVal('misStat2Num'), stat2Label: getVal('misStat2Txt'), image: getVal('misImg') }, stack: { title: getVal('stkTitle'), desc: getVal('stkDesc'), image: getVal('stkImg') }, vision: { title: getVal('visTitle'), desc: getVal('visDesc'), image: getVal('visImg') } }; save('DIGIWEB_ABOUT_DATA', aboutData); alert('About Saved!'); }
+
+        function renderProjectList() { const c = document.getElementById('projList'); c.innerHTML = ''; projectData.forEach((p, idx) => { c.innerHTML += `<div class="item-row"><div class="flex items-center gap-4"><img src="${p.image}" class="w-12 h-12 rounded object-cover"><div><div class="font-bold text-sm">${p.title}</div></div></div><div class="flex gap-2"><button onclick="editProj(${idx})" class="text-blue-400 p-2"><i class="ri-pencil-line"></i></button><button onclick="delProj(${idx})" class="text-red-400 p-2"><i class="ri-delete-bin-line"></i></button></div></div>`; }); }
+        function editProj(idx) { editingProjIndex = idx; const p = projectData[idx]; setVal('projTitle', p.title); setVal('projCat', p.category); setVal('projSub', p.subtitle); setVal('projLink', p.link); setVal('projImg', p.image); document.getElementById('projLarge').checked = p.isLarge; }
+        function delProj(idx) { if(confirm('Delete?')) { projectData.splice(idx, 1); save('DIGIWEB_PROJECTS', projectData); renderProjectList(); } }
+        document.getElementById('projForm').addEventListener('submit', (e) => { e.preventDefault(); const n = { id: editingProjIndex!==null?projectData[editingProjIndex].id:Date.now(), title: getVal('projTitle'), category: getVal('projCat'), subtitle: getVal('projSub'), link: getVal('projLink'), image: getVal('projImg'), isLarge: document.getElementById('projLarge').checked }; if(editingProjIndex!==null) projectData[editingProjIndex]=n; else projectData.push(n); save('DIGIWEB_PROJECTS', projectData); renderProjectList(); document.getElementById('projForm').reset(); editingProjIndex=null; alert('Project Saved!'); });
+
+        // --- SERVICES SECTION LOGIC (NEW) ---
+        function renderServiceList() {
+            const c = document.getElementById('serviceList');
+            c.innerHTML = '';
+            servicesData.forEach((s, idx) => {
+                c.innerHTML += `
+                <div class="item-row">
+                    <div class="flex items-center gap-4">
+                        <div class="w-10 h-10 bg-slate-800 rounded flex items-center justify-center text-cyan-400"><i class="${s.icon} text-xl"></i></div>
+                        <div>
+                            <div class="font-bold text-sm">${s.title}</div>
+                            <div class="text-xs text-slate-500 truncate w-48">${s.desc}</div>
+                        </div>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="editService(${idx})" class="text-blue-400 p-2"><i class="ri-pencil-line"></i></button>
+                        <button onclick="deleteService(${idx})" class="text-red-400 p-2"><i class="ri-delete-bin-line"></i></button>
+                    </div>
+                </div>`;
+            });
+        }
+
+        function editService(idx) {
+            editingServiceIndex = idx;
+            const s = servicesData[idx];
+            setVal('serviceTitle', s.title);
+            setVal('serviceDesc', s.desc);
+            setVal('serviceIcon', s.icon);
+            setVal('serviceImg', s.image);
+            document.getElementById('service-mode').textContent = 'Edit Service';
+            // Scroll to form
+            document.getElementById('sec-services').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function deleteService(idx) {
+            if(confirm('Are you sure you want to remove this service?')) {
+                servicesData.splice(idx, 1);
+                save('DIGIWEB_SERVICES_DATA', servicesData);
+                renderServiceList();
+            }
+        }
+
+        function resetServiceForm() {
+            document.getElementById('serviceForm').reset();
+            editingServiceIndex = null;
+            document.getElementById('service-mode').textContent = 'Add Service';
+        }
+
+        document.getElementById('serviceForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const newItem = {
+                title: getVal('serviceTitle'),
+                desc: getVal('serviceDesc'),
+                icon: getVal('serviceIcon') || 'ri-service-line',
+                image: getVal('serviceImg')
+            };
+
+            if (editingServiceIndex !== null) {
+                servicesData[editingServiceIndex] = newItem;
+            } else {
+                servicesData.push(newItem);
+            }
+
+            save('DIGIWEB_SERVICES_DATA', servicesData);
+            renderServiceList();
+            resetServiceForm();
+            alert('Service Saved!');
+        });
+
+
+        // --- UNIFIED BLOG LIST LOGIC ---
+        function renderBlogList() { 
+            const c = document.getElementById('blogList'); 
+            c.innerHTML = ''; 
+            blogData.forEach((p, idx) => { 
+                c.innerHTML += `
+                    <div class="item-row">
+                        <div class="flex items-center gap-4">
+                            <img src="${p.image}" class="w-12 h-12 rounded object-cover" onerror="this.src='https://placehold.co/100x100?text=No+Img'">
+                            <div>
+                                <div class="font-bold text-sm text-white">${p.title}</div>
+                                <div class="text-xs text-slate-500">${p.date}</div>
+                            </div>
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick="openBlogDetails(${idx})" class="px-3 py-1 bg-blue-900/50 hover:bg-blue-800 text-blue-300 text-xs rounded border border-blue-800 flex items-center gap-1">
+                                <i class="ri-file-text-line"></i> Content
+                            </button>
+                            <button onclick="editBlogCard(${idx})" class="text-slate-400 hover:text-white p-2" title="Edit Card Info"><i class="ri-pencil-line"></i></button>
+                            <button onclick="deleteBlog(${idx})" class="text-red-400 hover:text-red-300 p-2" title="Delete Post"><i class="ri-delete-bin-line"></i></button>
+                        </div>
+                    </div>`; 
+            }); 
+        }
+
+        function renderHomeBlogSelector() { const s = document.getElementById('homeBlogSelected'); const a = document.getElementById('homeBlogAvailable'); s.innerHTML=''; a.innerHTML=''; blogData.forEach((p, idx) => { const html = `<div class="flex items-center justify-between bg-slate-800 p-3 rounded border ${p.featured ? 'border-green-500/30' : 'border-slate-700'}"><div class="flex items-center gap-3 overflow-hidden"><img src="${p.image}" class="w-8 h-8 rounded object-cover"><span class="text-sm truncate">${p.title}</span></div><button onclick="toggleHomeStatus(${idx})" class="${p.featured ? 'text-red-400' : 'text-green-400'}"><i class="${p.featured ? 'ri-close-line' : 'ri-add-line'}"></i></button></div>`; if(p.featured) s.innerHTML+=html; else a.innerHTML+=html; }); }
+        function toggleHomeStatus(idx) { blogData[idx].featured = !blogData[idx].featured; save('DIGIWEB_BLOG_DATA', blogData); renderBlogList(); renderHomeBlogSelector(); }
+        
+        function editBlogCard(idx) { editingBlogIndex = idx; const p = blogData[idx]; setVal('blogTitle', p.title); setVal('blogCat', p.category); setVal('blogDate', p.date); setVal('blogExcerpt', p.excerpt); setVal('blogLink', p.link); setVal('blogImg', p.image); window.scrollTo({ top: document.getElementById('sec-blog').offsetTop - 100, behavior: 'smooth' }); }
+        function deleteBlog(idx) { if(confirm('Delete?')) { blogData.splice(idx, 1); save('DIGIWEB_BLOG_DATA', blogData); renderBlogList(); renderHomeBlogSelector(); } }
+        
+        // BLOG FORM SUBMIT (Auto-generates Link)
+        document.getElementById('blogForm').addEventListener('submit', (e) => { 
+            e.preventDefault(); 
+            const newId = editingBlogIndex !== null ? blogData[editingBlogIndex].id : Date.now();
+            
+            // Auto-Generate Link based on ID
+            const autoLink = `blog-post.html?id=${newId}`;
+
+            const currentFeatured = editingBlogIndex !== null ? blogData[editingBlogIndex].featured : false; 
+            const currentDetails = editingBlogIndex !== null ? blogData[editingBlogIndex].details : {}; 
+            
+            const n = { 
+                id: newId, 
+                title: getVal('blogTitle'), 
+                category: getVal('blogCat'), 
+                date: getVal('blogDate'), 
+                excerpt: getVal('blogExcerpt'), 
+                link: autoLink, // FORCE AUTO LINK
+                image: getVal('blogImg'), 
+                featured: currentFeatured, 
+                details: currentDetails 
+            }; 
+            
+            if (editingBlogIndex !== null) blogData[editingBlogIndex] = n; 
+            else blogData.push(n); 
+            
+            save('DIGIWEB_BLOG_DATA', blogData); 
+            renderBlogList(); 
+            renderHomeBlogSelector(); 
+            document.getElementById('blogForm').reset(); 
+            editingBlogIndex = null; 
+            alert('Blog Post Saved! Link generated: ' + autoLink); 
+        });
+
+        // --- UNIFIED DETAIL EDITOR LOGIC ---
+        function openBlogDetails(index) {
+            currentDetailIndex = index;
+            const post = blogData[index];
+            const d = post.details || {}; 
+
+            document.getElementById('blogListView').classList.remove('list-mode');
+            document.getElementById('blogListView').classList.add('hidden');
+            document.getElementById('blogDetailView').classList.add('active');
+
+            document.getElementById('editingPostTitle').innerText = post.title;
+
+            setVal('detailBannerTitle', d.bannerTitle || post.title); setVal('detailBannerSub', d.bannerSub);
+            setVal('detailAuthor', d.author); setVal('detailDate', d.date || post.date); setVal('detailReadTime', d.readTime);
+            setVal('detailMainImg', d.mainImg || post.image);
+            setVal('detailIntro', d.intro);
+            setVal('detailH2_1', d.h2_1); setVal('detailP_1', d.p_1); setVal('detailP_2', d.p_2);
+            setVal('detailQuote', d.quote);
+            setVal('detailH2_2', d.h2_2); setVal('detailP_3', d.p_3); setVal('detailP_4', d.p_4);
+            setVal('detailH2_3', d.h2_3); setVal('detailP_5', d.p_5);
+            setVal('detailConclusion', d.conclusion);
+
+            // Related Posts Logic (NEW)
+            setVal('detailRelatedIds', d.relatedIds);
+            
+            // Populate Helper List for Related IDs
+            const helperList = document.getElementById('availablePostIdsList');
+            if(helperList) {
+                helperList.innerHTML = blogData.map(p => {
+                    // Don't show current post in list to avoid self-linking
+                    if(p.id === post.id) return ''; 
+                    return `<div onclick="addRelatedId('${p.id}')" class="flex justify-between items-center p-2 hover:bg-slate-700 rounded cursor-pointer border border-transparent hover:border-slate-600 transition-colors">
+                        <span class="text-xs text-slate-300 truncate w-3/4">${p.title}</span>
+                        <span class="text-xs font-mono text-blue-400 bg-slate-900 px-1 rounded">${p.id}</span>
+                    </div>`;
+                }).join('');
+            }
+        }
+
+        // Helper to add ID to input field
+        function addRelatedId(id) {
+            const input = document.getElementById('detailRelatedIds');
+            if(!input) return;
+            const current = input.value.trim();
+            if(current.length > 0) {
+                // Check if already exists to prevent duplicates
+                if(!current.includes(id)) {
+                    input.value = current + ', ' + id;
+                }
+            } else {
+                input.value = id;
+            }
+        }
+
+        function saveBlogDetails() {
+            if (currentDetailIndex === null) return;
+            const details = {
+                bannerTitle: getVal('detailBannerTitle'), bannerSub: getVal('detailBannerSub'),
+                author: getVal('detailAuthor'), date: getVal('detailDate'), readTime: getVal('detailReadTime'),
+                mainImg: getVal('detailMainImg'),
+                intro: getVal('detailIntro'),
+                h2_1: getVal('detailH2_1'), p_1: getVal('detailP_1'), p_2: getVal('detailP_2'),
+                quote: getVal('detailQuote'),
+                h2_2: getVal('detailH2_2'), p_3: getVal('detailP_3'), p_4: getVal('detailP_4'),
+                h2_3: getVal('detailH2_3'), p_5: getVal('detailP_5'),
+                conclusion: getVal('detailConclusion'),
+                relatedIds: getVal('detailRelatedIds') // Save Related IDs
+            };
+            blogData[currentDetailIndex].details = details;
+            save('DIGIWEB_BLOG_DATA', blogData);
+            alert("Content Saved Successfully!");
+        }
+
+        function closeBlogDetails() {
+            document.getElementById('blogDetailView').classList.remove('active');
+            document.getElementById('blogListView').classList.remove('hidden');
+            document.getElementById('blogListView').classList.add('list-mode');
+            currentDetailIndex = null;
+        }
+
+        // --- PROJECT 1 DETAIL FUNCTIONS (The User Requested Feature) ---
+        function fillProjDetail1() {
+            // Populate P1 Form from p1Data
+            setVal('p1Title', p1Data.title);
+            setVal('p1Sub', p1Data.subtitle);
+            setVal('p1HeroImg', p1Data.heroImg);
+            
+            setVal('p1Stat1Val', p1Data.stat1Val);
+            setVal('p1Stat1Lbl', p1Data.stat1Lbl);
+            setVal('p1Stat2Val', p1Data.stat2Val);
+            setVal('p1Stat2Lbl', p1Data.stat2Lbl);
+
+            setVal('p1ObjTitle', p1Data.objTitle);
+            setVal('p1ObjText', p1Data.objText);
+            
+            setVal('p1Part1Title', p1Data.part1Title);
+            setVal('p1Part1Text', p1Data.part1Text);
+            
+            setVal('p1Part2Title', p1Data.part2Title);
+            setVal('p1Part2Text', p1Data.part2Text);
+            
+            setVal('p1Part3Text', p1Data.part3Text);
+            
+            setVal('p1MidImg', p1Data.midImg);
+            setVal('p1BotImg', p1Data.botImg);
+
+            // Next Project Data
+            setVal('p1NextProjTitle', p1Data.nextProjTitle);
+            setVal('p1NextProjLink', p1Data.nextProjLink);
+        }
+
+        function saveProjDetail1() {
+            p1Data = {
+                title: getVal('p1Title'),
+                subtitle: getVal('p1Sub'),
+                heroImg: getVal('p1HeroImg'),
+                
+                stat1Val: getVal('p1Stat1Val'),
+                stat1Lbl: getVal('p1Stat1Lbl'),
+                stat2Val: getVal('p1Stat2Val'),
+                stat2Lbl: getVal('p1Stat2Lbl'),
+
+                objTitle: getVal('p1ObjTitle'),
+                objText: getVal('p1ObjText'),
+                
+                part1Title: getVal('p1Part1Title'),
+                part1Text: getVal('p1Part1Text'),
+                
+                part2Title: getVal('p1Part2Title'),
+                part2Text: getVal('p1Part2Text'),
+                
+                part3Text: getVal('p1Part3Text'),
+                
+                midImg: getVal('p1MidImg'),
+                botImg: getVal('p1BotImg'),
+
+                // Next Project Data
+                nextProjTitle: getVal('p1NextProjTitle'),
+                nextProjLink: getVal('p1NextProjLink')
+            };
+
+            save('DIGIWEB_PROJ_DETAIL_1', p1Data);
+            alert('Project One Details Saved!');
+        }
+
+        // --- PROJECT 2 DETAIL FUNCTIONS ---
+        function fillProjDetail2() {
+            setVal('p2HeroTitle', p2Data.heroTitle);
+            setVal('p2HeroDesc', p2Data.heroDesc);
+            
+            setVal('p2S1Title', p2Data.s1Title); setVal('p2S1Text1', p2Data.s1Text1); setVal('p2S1Text2', p2Data.s1Text2);
+            setVal('p2S1Img1', p2Data.s1Imgs[0]); setVal('p2S1Img2', p2Data.s1Imgs[1]); setVal('p2S1Img3', p2Data.s1Imgs[2]);
+            
+            setVal('p2S2Title', p2Data.s2Title); setVal('p2S2Text1', p2Data.s2Text1); setVal('p2S2Text2', p2Data.s2Text2);
+            setVal('p2S2Img1', p2Data.s2Imgs[0]); setVal('p2S2Img2', p2Data.s2Imgs[1]); setVal('p2S2Img3', p2Data.s2Imgs[2]);
+            
+            setVal('p2S3Title', p2Data.s3Title); setVal('p2S3Text1', p2Data.s3Text1); setVal('p2S3Text2', p2Data.s3Text2);
+            setVal('p2S3Img1', p2Data.s3Imgs[0]); setVal('p2S3Img2', p2Data.s3Imgs[1]); setVal('p2S3Img3', p2Data.s3Imgs[2]);
+        }
+
+        function saveProjDetail2() {
+            p2Data = {
+                heroTitle: getVal('p2HeroTitle'), heroDesc: getVal('p2HeroDesc'),
+                s1Title: getVal('p2S1Title'), s1Text1: getVal('p2S1Text1'), s1Text2: getVal('p2S1Text2'),
+                s1Imgs: [getVal('p2S1Img1'), getVal('p2S1Img2'), getVal('p2S1Img3')],
+                s2Title: getVal('p2S2Title'), s2Text1: getVal('p2S2Text1'), s2Text2: getVal('p2S2Text2'),
+                s2Imgs: [getVal('p2S2Img1'), getVal('p2S2Img2'), getVal('p2S2Img3')],
+                s3Title: getVal('p2S3Title'), s3Text1: getVal('p2S3Text1'), s3Text2: getVal('p2S3Text2'),
+                s3Imgs: [getVal('p2S3Img1'), getVal('p2S3Img2'), getVal('p2S3Img3')]
+            };
+            save('DIGIWEB_PROJ_DETAIL_2', p2Data);
+            alert('Project Two Details Saved!');
+        }
+
+        // --- PROJECT 3 DETAIL FUNCTIONS (UPDATED: DYNAMIC CARDS) ---
+        function fillProjDetail3() {
+            setVal('p3HeroTitle1', p3Data.heroTitle1);
+            setVal('p3HeroTitle2', p3Data.heroTitle2);
+            setVal('p3HeroDesc', p3Data.heroDesc);
+            renderP3Cards();
+        }
+
+        function renderP3Cards() {
+            const list = document.getElementById('p3CardList');
+            list.innerHTML = '';
+            const cards = p3Data.cards || [];
+            cards.forEach((card, idx) => {
+                const typeLabel = card.type.charAt(0).toUpperCase() + card.type.slice(1);
+                list.innerHTML += `<div class="item-row"><div><div class="font-bold text-sm text-white">${card.title}</div><div class="text-xs text-slate-500">${card.tag} | Type: ${typeLabel}</div></div><div class="flex gap-2"><button onclick="editP3Card(${idx})" class="p-2 text-indigo-400"><i class="ri-pencil-line"></i></button><button onclick="deleteP3Card(${idx})" class="p-2 text-red-400"><i class="ri-delete-bin-line"></i></button></div></div>`;
+            });
+        }
+
+        function editP3Card(idx) {
+            editingP3CardIndex = idx;
+            const card = p3Data.cards[idx];
+            setVal('p3CardTitle', card.title); setVal('p3CardTag', card.tag); setVal('p3CardDesc', card.desc); setVal('p3CardType', card.type);
+            document.getElementById('p3CardWide').checked = card.wide;
+            if(card.type === 'analytics') { document.getElementById('p3StatFields').classList.remove('hidden'); setVal('p3CardStatVal', card.statVal); setVal('p3CardStatLbl', card.statLbl); } 
+            else { document.getElementById('p3StatFields').classList.add('hidden'); }
+            document.getElementById('p3-card-mode').textContent = 'Edit Card';
+        }
+
+        function deleteP3Card(idx) {
+            if(confirm('Remove this card?')) { p3Data.cards.splice(idx, 1); save('DIGIWEB_PROJ_DETAIL_3', p3Data); renderP3Cards(); }
+        }
+
+        function resetP3CardForm() {
+            document.getElementById('p3CardForm').reset(); editingP3CardIndex = null; document.getElementById('p3-card-mode').textContent = 'Add New Card'; document.getElementById('p3StatFields').classList.add('hidden');
+        }
+
+        document.getElementById('p3CardType').addEventListener('change', (e) => {
+            const stats = document.getElementById('p3StatFields');
+            if(e.target.value === 'analytics') stats.classList.remove('hidden'); else stats.classList.add('hidden');
+        });
+
+        document.getElementById('p3CardForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const cardData = { id: editingP3CardIndex !== null ? p3Data.cards[editingP3CardIndex].id : 'c' + Date.now(), type: getVal('p3CardType'), tag: getVal('p3CardTag'), title: getVal('p3CardTitle'), desc: getVal('p3CardDesc'), wide: document.getElementById('p3CardWide').checked, statVal: getVal('p3CardStatVal'), statLbl: getVal('p3CardStatLbl') };
+            if(!p3Data.cards) p3Data.cards = [];
+            if (editingP3CardIndex !== null) p3Data.cards[editingP3CardIndex] = cardData; else p3Data.cards.push(cardData);
+            resetP3CardForm(); renderP3Cards(); save('DIGIWEB_PROJ_DETAIL_3', p3Data); alert('Card Saved!');
+        });
+
+        function saveProjDetail3() {
+            p3Data.heroTitle1 = getVal('p3HeroTitle1'); p3Data.heroTitle2 = getVal('p3HeroTitle2'); p3Data.heroDesc = getVal('p3HeroDesc');
+            save('DIGIWEB_PROJ_DETAIL_3', p3Data); alert('Project Three Details Saved!');
+        }
+
+        // --- PROJECT 4 DETAIL FUNCTIONS (NEW) ---
+        function fillProjDetail4() {
+            // Hero
+            setVal('p4HeroStart', p4Data.heroStart); setVal('p4HeroEnd', p4Data.heroEnd); setVal('p4HeroDesc', p4Data.heroDesc);
+            
+            // Bento
+            setVal('p4Bento1Title', p4Data.bento1Title); setVal('p4Bento1Desc', p4Data.bento1Desc);
+            setVal('p4Bento2Title', p4Data.bento2Title); setVal('p4Bento2Desc', p4Data.bento2Desc);
+            setVal('p4Bento3Title', p4Data.bento3Title); setVal('p4Bento3Desc', p4Data.bento3Desc);
+            setVal('p4Bento4Title', p4Data.bento4Title); setVal('p4Bento4Desc', p4Data.bento4Desc);
+
+            // Stats
+            setVal('p4Stat1Val', p4Data.stat1Val); setVal('p4Stat1Lbl', p4Data.stat1Lbl);
+            setVal('p4Stat2Val', p4Data.stat2Val); setVal('p4Stat2Lbl', p4Data.stat2Lbl);
+            setVal('p4Stat3Val', p4Data.stat3Val); setVal('p4Stat3Lbl', p4Data.stat3Lbl);
+
+            // Steps
+            renderP4Steps();
+
+            renderP4ExtraCards();
+        }
+
+        function renderP4ExtraCards() {
+            const list = document.getElementById('p4CardList');
+            list.innerHTML = '';
+            const cards = p4Data.extraCards || [];
+            cards.forEach((card, idx) => {
+                list.innerHTML += `<div class="bg-slate-800 p-2 rounded flex justify-between items-center"><div class="text-sm"><span class="font-bold text-pink-400">${card.icon}</span> - ${card.title}</div><button onclick="deleteP4Card(${idx})" class="text-red-400"><i class="ri-delete-bin-line"></i></button></div>`;
+            });
+        }
+
+        document.getElementById('p4CardForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const card = { icon: getVal('p4CardIcon'), title: getVal('p4CardTitle'), desc: getVal('p4CardDesc') };
+            if(!p4Data.extraCards) p4Data.extraCards = [];
+            p4Data.extraCards.push(card);
+            save('DIGIWEB_PROJ_DETAIL_4', p4Data);
+            document.getElementById('p4CardForm').reset();
+            renderP4ExtraCards();
+        });
+
+        function deleteP4Card(idx) {
+            if(confirm('Remove card?')) {
+                p4Data.extraCards.splice(idx, 1);
+                save('DIGIWEB_PROJ_DETAIL_4', p4Data);
+                renderP4ExtraCards();
+            }
+        }
+
+        function renderP4Steps() {
+            const list = document.getElementById('p4StepList');
+            list.innerHTML = '';
+            const steps = p4Data.steps || [];
+            steps.forEach((step, idx) => {
+                list.innerHTML += `<div class="bg-slate-800 p-2 rounded flex justify-between items-center mb-2"><div class="text-sm"><span class="font-bold text-pink-400">${step.icon}</span> - ${step.title}</div><button onclick="deleteP4Step(${idx})" class="text-red-400"><i class="ri-delete-bin-line"></i></button></div>`;
+            });
+        }
+
+        document.getElementById('p4StepForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const step = { title: getVal('p4StepTitle'), desc: getVal('p4StepDesc'), icon: getVal('p4StepIcon') };
+            if(!p4Data.steps) p4Data.steps = [];
+            p4Data.steps.push(step);
+            save('DIGIWEB_PROJ_DETAIL_4', p4Data);
+            document.getElementById('p4StepForm').reset();
+            renderP4Steps();
+        });
+
+        function deleteP4Step(idx) {
+            if(confirm('Remove step?')) {
+                p4Data.steps.splice(idx, 1);
+                save('DIGIWEB_PROJ_DETAIL_4', p4Data);
+                renderP4Steps();
+            }
+        }
+
+        function saveProjDetail4() {
+            p4Data.heroStart = getVal('p4HeroStart'); p4Data.heroEnd = getVal('p4HeroEnd'); p4Data.heroDesc = getVal('p4HeroDesc');
+            p4Data.bento1Title = getVal('p4Bento1Title'); p4Data.bento1Desc = getVal('p4Bento1Desc');
+            p4Data.bento2Title = getVal('p4Bento2Title'); p4Data.bento2Desc = getVal('p4Bento2Desc');
+            p4Data.bento3Title = getVal('p4Bento3Title'); p4Data.bento3Desc = getVal('p4Bento3Desc');
+            p4Data.bento4Title = getVal('p4Bento4Title'); p4Data.bento4Desc = getVal('p4Bento4Desc');
+            
+            p4Data.stat1Val = getVal('p4Stat1Val'); p4Data.stat1Lbl = getVal('p4Stat1Lbl');
+            p4Data.stat2Val = getVal('p4Stat2Val'); p4Data.stat2Lbl = getVal('p4Stat2Lbl');
+            p4Data.stat3Val = getVal('p4Stat3Val'); p4Data.stat3Lbl = getVal('p4Stat3Lbl');
+
+            save('DIGIWEB_PROJ_DETAIL_4', p4Data);
+            alert('Project 4 Saved!');
+        }
+
+        function resetDefaults() { if(confirm('Reset?')) { localStorage.clear(); location.reload(); } }
+        function setVal(id, val) { const el = document.getElementById(id); if(el) el.value = val || ''; }
+        function getVal(id) { return document.getElementById(id) ? document.getElementById(id).value : ''; }
+
+        init();
+    </script>
+</body>
+</html>

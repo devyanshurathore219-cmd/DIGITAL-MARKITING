@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mastering Digital Product Design - DigiWebNow Blog</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" crossorigin="anonymous" />
+    <style>
+        /* Your original custom variables and fonts */
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700;800;900&family=Quicksand:wght@300;400;500;600;700&display=swap');
+
+        :root {
+            --Playfair: 'Playfair Display', serif;
+            --Quicksand: 'Quicksand', sans-serif;
+            --secondary-color: #0BA34E;
+            --text-dark: #0BA34E;
+            --text-light: #767268;
+            --dark-bg: #111;
+        }
+
+        body {
+            font-family: var(--Quicksand);
+            line-height: 1.6;
+            background-color: var(--dark-bg);
+            color: #ccc;
+        }
+
+        .container {
+            max-width: 1320px;
+            margin: 0 auto;
+            padding: 0 1.2rem;
+        }
+
+        /* Replicating the header banner style from blog.html */
+        .banner-post {
+            background-color: var(--dark-bg);
+            padding-top: 10vw; /* Adjusted for navigation height */
+            padding-bottom: 5rem;
+            text-align: center;
+        }
+        .banner-title {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-family: var(--Playfair);
+            line-height: 1.2;
+            color: white;
+            padding-top: 2rem;
+            padding-bottom: 1rem;
+        }
+        .banner-title span {
+            color: var(--secondary-color);
+        }
+
+        /* Post Content Styling */
+        .post-content p {
+            margin-bottom: 1.5rem;
+            line-height: 1.8;
+            font-size: 1.1rem;
+            color: #ddd;
+        }
+        .post-content h2 {
+            font-family: var(--Playfair);
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: white;
+            margin-top: 3rem;
+            margin-bottom: 1.5rem;
+            border-left: 5px solid var(--secondary-color);
+            padding-left: 1rem;
+        }
+        .post-content blockquote {
+            border-left: 4px solid var(--secondary-color);
+            padding: 1rem 1.5rem;
+            margin: 2rem 0;
+            font-style: italic;
+            background-color: #1a1a1a;
+            color: #fff;
+        }
+        .post-content a {
+            color: var(--secondary-color);
+            text-decoration: underline;
+        }
+        .post-content ul, .post-content ol {
+            margin-left: 2rem;
+            margin-bottom: 1.5rem;
+        }
+        .post-content li {
+            margin-bottom: 0.5rem;
+        }
+
+        /* Sidebar card style */
+        .sidebar-card {
+            background-color: #1a1a1a;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 2rem;
+            transition: transform 0.3s ease;
+        }
+        .sidebar-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(11,163,78,0.25);
+        }
+        .sidebar-card img {
+            height: 150px;
+            object-fit: cover;
+        }
+        .sidebar-card-details {
+            padding: 1rem;
+        }
+        .sidebar-card h4 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Navigation Style (Copied from your style.css for consistency) */
+        .site-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5vw;
+            background: #111;
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+            pointer-events: auto;
+        }
+
+        .nav-inner {
+            width: 100%;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            gap: 1vw;
+            padding: 0 3vw;
+            justify-content: space-between;
+        }
+
+        .nav__logo h1 a {
+            color: var(--secondary-color);
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.5rem; /* Fixed size for better responsiveness */
+        }
+
+        .nav__links {
+            display: flex;
+            flex-direction: row;
+            gap: 2rem;
+            margin: 0;
+            align-items: center;
+        }
+
+        .nav__links a {
+            color: #fff;
+            text-decoration: none;
+            font-size: 1rem;
+            font-weight: 400;
+            display: inline-block;
+            padding: 6px 4px;
+        }
+
+        .contact-btn {
+            background-color: var(--secondary-color);
+            color: #fff;
+            border: none;
+            padding: 8px 14px;
+            font-size: 0.95rem;
+            line-height: 1;
+            border-radius: 999px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            box-shadow: 0 2px 6px rgba(11,163,78,0.15);
+            white-space: nowrap;
+        }
+        .contact-btn svg {
+            width: 1rem;
+            height: 1rem;
+        }
+        /* End Navigation Style */
+
+
+        /* Footer Style (Copied from your style.css) */
+        footer {
+          background-color: var(--dark-bg);
+          color: #fff;
+          padding-top: 4rem;
+        }
+        .footer__container {
+          display: grid;
+          gap: 4rem 2rem;
+          max-width: 1320px;
+          margin: 0 auto;
+          padding: 0 1.2rem;
+        }
+        .footer__logo a {
+          font-size: 1.5rem;
+          font-weight: 800;
+          color: var(--text-dark);
+        }
+        .footer__logo a span {
+          color: var(--secondary-color);
+        }
+        .footer__col .section__description {
+          margin-bottom: 2rem;
+          color: var(--text-light);
+        }
+        .footer__col h3 {
+          margin-bottom: 1rem;
+          font-size: 1.25rem;
+          color: var(--text-dark);
+        }
+        .footer__socials a {
+          padding: 4px 6px;
+          font-size: 1.25rem;
+          color: var(--secondary-color);
+          border: 1px solid var(--secondary-color);
+          border-radius: 100%;
+        }
+        .footer__socials a:hover {
+          color: white;
+          background-color: var(--secondary-color);
+        }
+        .footer__col h4 {
+          margin-bottom: 2rem;
+          font-size: 1.2rem;
+          color: var(--text-dark);
+        }
+        .footer__links a {
+          color: var(--text-light);
+        }
+        .footer__links a:hover {
+          color: var(--secondary-color);
+        }
+        .footer__links a span {
+          margin-right: 0.5rem;
+          color: var(--secondary-color);
+        }
+        .footer__bar {
+          background-color: #111;
+          padding: 1rem;
+          color: var(--text-light);
+          text-align: center;
+        }
+        @media (min-width: 768px) {
+          .footer__container {
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+          }
+        }
+        @media (max-width: 767px) {
+            .site-nav { height: auto; padding: 10px 0; }
+            .nav-inner { flex-direction: column; gap: 1rem; padding: 0 1.2rem; }
+            .nav__links { display: none; } /* Keeping consistent with your mobile view */
+            .contact-btn { margin-top: 5px; }
+        }
+        /* End Footer Style */
+
+
+    </style>
+</head>
+<body>
+
+    <!-- Header & Navigation -->
+    <header>
+        <nav class="site-nav">
+            <div class="nav-inner">
+                <div class="nav__logo">
+                    <h1><a href="#">DigiWebNow</a></h1>
+                </div>
+
+                <!-- Navigation Links (Hidden on small screens based on your original CSS) -->
+                <ul class="nav__links">
+                    <a href="#">About Us</a>
+                    <a href="#">Portfolio</a>
+                    <a href="#">Services</a>
+                    <a href="#" style="color: var(--secondary-color);">Blog</a>
+                </ul>
+
+                <button class="contact-btn">Let's Talk
+                    <svg fill="none" viewBox="0 0 20 20"><path fill="#fff" d="M2.5 14.375V17.5h3.125l9.217-9.217-3.125-3.125L2.5 14.375Zm14.758-8.508a.83.83 0 0 0 0-1.175l-1.95-1.95a.83.83 0 0 0-1.175 0l-1.525 1.525 3.125 3.125 1.525-1.525Z"></path></svg>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Banner/Hero Section for the Post Title -->
+    <section class="banner-post">
+        <div class="container max-w-4xl">
+            <h1 class="banner-title">
+                Mastering Digital Product Design
+            </h1>
+            <p class="text-lg text-gray-400">
+                Key strategies for creating products that users not only use, but love.
+            </p>
+            <div class="flex justify-center items-center space-x-4 mt-6 text-gray-400 text-sm">
+                <span><i class="ri-user-line text-sm text-[var(--secondary-color)]"></i> By Jane Doe</span>
+                <span><i class="ri-calendar-line text-sm text-[var(--secondary-color)]"></i> October 26, 2025</span>
+                <span><i class="ri-time-line text-sm text-[var(--secondary-color)]"></i> 8 min read</span>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Main Content Area -->
+    <section class="py-16">
+        <div class="container max-w-7xl">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+                
+                <!-- Main Post Content -->
+                <div class="lg:col-span-2 post-content">
+                    
+                    <!-- Featured Image -->
+                    <div class="mb-8 rounded-lg overflow-hidden shadow-2xl">
+                        <img src="https://cdn.prod.website-files.com/68751abd96d2074611f9be95/687fa830bf6c16612accd187_Project%20Image%2002.avif" alt="Digital Product Design Hero" class="w-full h-auto object-cover max-h-96" onerror="this.onerror=null;this.src='https://placehold.co/1000x400/1a1a1a/0BA34E?text=Featured+Image';">
+                    </div>
+
+                    <p>
+                        In the increasingly competitive digital landscape, a product's success is no longer defined by its features alone, but by the quality of the user experience it delivers. Mastering digital product design involves a holistic approach that blends strategic thinking, deep user empathy, and flawless execution. This post outlines the key pillars of modern product design that lead to user love and sustained growth.
+                    </p>
+
+                    <h2>Empathy and User Research: The Foundation</h2>
+                    <p>
+                        The journey begins with truly understanding your users. This involves moving beyond simple demographics and diving into their motivations, pain points, and natural behaviors. Qualitative research (interviews, usability tests) and quantitative data (analytics, heatmaps) must work in tandem to paint a complete picture.
+                    </p>
+                    <p>
+                        A key strategy here is developing robust **user personas** and **journey maps**. These artifacts act as compasses, ensuring every design decision is grounded in real user needs, preventing feature creep, and maintaining focus on high-value interactions.
+                    </p>
+
+                    <blockquote class="text-xl">
+                        "Design is not just what it looks like and feels like. Design is how it works."
+                    </blockquote>
+
+                    <h2>Iterative Prototyping and Testing</h2>
+                    <p>
+                        In the digital realm, perfect is the enemy of done. The most effective product teams embrace a rapid, iterative cycle of prototyping, testing, and refinement. Tools for low-fidelity and high-fidelity prototypes allow designers to quickly validate assumptions without the heavy investment of full development.
+                    </p>
+                    <p>
+                        **Testing early and often** is non-negotiable. Even small-scale, remote usability tests can uncover major flaws in flow and logic. The goal is to fail fast, learn faster, and pivot the design based on tangible user feedback. This continuous feedback loop is what separates good products from great ones.
+                    </p>
+
+                    <h2>The Role of Visual Design and Branding</h2>
+                    <p>
+                        While function is paramount, the visual presentation is what creates the first impression and builds emotional connection. A consistent and thoughtful visual identity reinforces brand trust. This includes creating a scalable **Design System**—a single source of truth for all components, styles, and guidelines.
+                    </p>
+                    <ul class="list-disc list-outside ml-6">
+                        <li>**Accessibility:** Designing for all users, including those with disabilities (WCAG guidelines).</li>
+                        <li>**Motion Design:** Using subtle animations and transitions to provide feedback and guide the user's eye.</li>
+                        <li>**Information Hierarchy:** Utilizing typography, color, and spacing to clearly communicate the importance of elements.</li>
+                    </ul>
+
+                    <p>
+                        Ultimately, mastering digital product design is a commitment to continuous learning and user-centricity. By focusing on empathy, iterative development, and aesthetic quality, you can create digital products that stand the test of time and truly delight their audience.
+                    </p>
+
+                    <!-- Author/Share Section -->
+                    <div class="mt-12 pt-6 border-t border-gray-800 flex flex-col sm:flex-row justify-between items-start sm:items-center">
+                        <div class="flex items-center space-x-4">
+                            <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=200&auto=format&fit=crop" alt="Author Avatar" class="rounded-full w-12 h-12 object-cover">
+                            <div>
+                                <h5 class="text-white font-bold">Jane Doe</h5>
+                                <p class="text-gray-500 text-sm">Product Design Lead at DigiWebNow</p>
+                            </div>
+                        </div>
+                        <div class="flex space-x-3 mt-4 sm:mt-0">
+                            <span class="text-gray-400 font-semibold hidden sm:inline">Share:</span>
+                            <button class="text-gray-400 hover:text-[var(--secondary-color)] transition"><i class="ri-twitter-x-line text-lg"></i></button>
+                            <button class="text-gray-400 hover:text-[var(--secondary-color)] transition"><i class="ri-facebook-fill text-lg"></i></button>
+                            <button class="text-gray-400 hover:text-[var(--secondary-color)] transition"><i class="ri-linkedin-fill text-lg"></i></button>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Sidebar for Related Content/Ads -->
+                <aside class="lg:col-span-1">
+                    <div class="sticky top-28 p-6 bg-[#1a1a1a] rounded-xl shadow-lg">
+                        <h3 class="text-xl font-bold mb-6 text-white border-b border-gray-700 pb-3">Related Articles</h3>
+                        
+                        <!-- Related Post Card 1 -->
+                        <a href="#" class="sidebar-card block">
+                            <img src="https://cdn.prod.website-files.com/68751abd96d2074611f9be95/687fa8955342ad8583494a7b_Project%20Image%2004.avif" alt="Related Article 1" class="w-full rounded-t-lg">
+                            <div class="sidebar-card-details">
+                                <span class="text-xs text-[var(--secondary-color)] font-semibold uppercase block mb-1">Branding</span>
+                                <h4>Why Consistent Branding Matters</h4>
+                                <p class="text-xs text-gray-500 mt-2">5 min read</p>
+                            </div>
+                        </a>
+                        
+                        <!-- Related Post Card 2 -->
+                        <a href="#" class="sidebar-card block">
+                            <img src="https://cdn.prod.website-files.com/68751abd96d2074611f9be95/687fa7ff583252dd175256f7_Project%20Image%2001.avif" alt="Related Article 2" class="w-full rounded-t-lg">
+                            <div class="sidebar-card-details">
+                                <span class="text-xs text-[var(--secondary-color)] font-semibold uppercase block mb-1">UX/UI</span>
+                                <h4>The Future of Immersive UX/UI</h4>
+                                <p class="text-xs text-gray-500 mt-2">7 min read</p>
+                            </div>
+                        </a>
+                        
+                        <!-- Call to Action Card -->
+                        <div class="p-6 bg-[var(--secondary-color)] rounded-xl text-white mt-8 text-center">
+                            <h4 class="text-2xl font-bold mb-3">Need Custom Design?</h4>
+                            <p class="text-sm mb-4">Let our experts handle your next digital project.</p>
+                            <button class="bg-white text-[var(--secondary-color)] font-bold py-2 px-6 rounded-full hover:bg-gray-200 transition">
+                                Get a Quote
+                            </button>
+                        </div>
+
+                    </div>
+                </aside>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- Footer (Copied directly from your blog.html and style.css for consistency) -->
+    <footer>
+        <div class="section__container footer__container">
+            <div class="footer__col">
+                <div class="footer__logo">
+                    <a href="#">Agency<span>BD</span></a>
+                </div>
+                <p class="section__description">
+                   AdencyBD is a creative digital agency dedicated to delivering innovative solutions.
+                </p>
+                <h3>Follow Us</h3>
+                <ul class="footer__socials">
+                    <li><a href="#"><i class="ri-facebook-fill"></i></a></li>
+                    <li><a href="#"><i class="ri-twitter-fill"></i></a></li>
+                    <li><a href="#"><i class="ri-instagram-fill"></i></a></li>
+                    <li><a href="#"><i class="ri-behance-fill"></i></a></li>
+                    <li><a href="#"><i class="ri-youtube-fill"></i></a></li>
+                </ul>
+            </div>
+            <div class="footer__col">
+                <h4>Quick Links</h4>
+                <ul class="footer__links">
+                    <li><a href="#">About Agency</a></li>
+                    <li><a href="#">Latest News & Blogs</a></li>
+                    <li><a href="#">Terms of Users</a></li>
+                    <li><a href="#">Our Services</a></li>
+                    <li><a href="#">Need a Career?</a></li>
+                </ul>
+            </div>
+            <div class="footer__col">
+                <h4>Support</h4>
+                <ul class="footer__links">
+                    <li><a href="#">Help Center</a></li>
+                    <li><a href="#">FAQs</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Report an Issue</a></li>
+                    <li><a href="#">Get a Quote</a></li>
+                </ul>
+            </div>
+            <div class="footer__col">
+                <h4>Contact Us</h4>
+                <ul class="footer__links">
+                    <li><a href="#d">
+                      <span><i class="ri-phone-fill"></i></span> +91 0987654321
+                    </a>
+                </li>
+                    <li><a href="#">
+                        <span><i class="ri-mail-fill"></i></span> info@agencybd.com
+                    </a>
+                </li>
+                    <li><a href="#">
+                        <span><i class="ri-map-pin-fill"></i></span>  2456 Royal In. Delhi
+                    </a>
+                </li>
+                </ul>
+             </div>
+            </div>
+            <div class="footer__bar">
+               Copyright © 2025 Web Design Mastery. All rights reserved.
+         </div>
+    </footer>
+
+
+    <script>
+        // Basic JavaScript functionality (can be expanded for interactive elements)
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('Blog post page loaded successfully.');
+            // Add any specific interactive logic for this page here, like table of contents generation.
+            
+            // Example of a simple back-to-blog button action
+            const backToBlogBtn = document.getElementById('back-to-blog');
+            if (backToBlogBtn) {
+                backToBlogBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    // In a real application, this would use a router or change window.location
+                    console.log('Navigating back to the blog index...');
+                    // window.history.back(); // Uncomment if running in a browser environment
+                });
+            }
+        });
+    </script>
+</body>
+</html>

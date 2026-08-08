@@ -1,0 +1,183 @@
+/* --- APPEND THESE STYLES TO YOUR EXISTING style.css --- */
+
+/* 1. Necessary Locomotive Scroll & Visibility Setup */
+/* This is crucial for Locomotive Scroll to work correctly */
+html, body {
+    width: 100%;
+    /* Ensure the body is visible immediately on the blog page */
+    opacity: 1 !important; 
+}
+#main {
+    /* Ensure all content is scrollable within #main */
+    position: relative;
+}
+
+/* 2. Blog Header Section */
+.blog-header-section {
+    padding-top: 5vw; /* Space below the sticky nav */
+    padding-bottom: 50px;
+    background-color: #111;
+    text-align: center;
+    color: #fff;
+}
+
+.blog-header-section .container {
+    padding-top: 100px; /* Extra padding to push content down */
+}
+
+.blog-main-title {
+    /* Large heading style */
+    font-family: var(--Playfair);
+    font-size: clamp(48px, 6vw, 100px); 
+    font-weight: 700;
+    line-height: 1.1;
+    color: #fff;
+    margin-bottom: 20px;
+    letter-spacing: -0.04em;
+}
+
+.blog-main-subtitle {
+    /* Subtitle style */
+    font-size: clamp(18px, 2.5vw, 24px);
+    color: #a5a5a5;
+    max-width: 800px;
+    margin: 0 auto;
+    line-height: 1.5;
+}
+
+
+/* 3. Modern Blog Card Styles from Homepage */
+
+/* Use blog-08 for background, and blog-full-list for proper padding */
+.blog-08 {
+    padding-top: 80px;
+    padding-bottom: 140px;
+    background-color: #111;
+    color: #fff;
+}
+
+.blog-08 .container {
+    max-width: 1380px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* Replicate the section header styling */
+.section-header-flex {
+  display: flex;
+  justify-content: space-between;
+  grid-column-gap: 20px;
+  grid-row-gap: 20px;
+}
+.section-header-left { max-width: 700px; flex-shrink: 1; }
+.heading-wrap.flex { display: flex; align-items: flex-start; gap: 10px; }
+.blog-08 .h1 { 
+    font-family: var(--Playfair); 
+    font-size: 80px; 
+    line-height: 1; 
+    font-weight: 400; 
+    letter-spacing: -0.04em; 
+    color: #fff; 
+    margin: 0; 
+}
+.blog-08 .h6 { 
+    font-size: 24px; 
+    line-height: 1.3; 
+    font-weight: 400; 
+    letter-spacing: -0.02em; 
+    color: #fff; 
+    margin: 0; 
+}
+
+
+/* Cards Grid */
+.blog-cards {
+  display: grid;
+  /* Adjust grid columns for modern look */
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); 
+  gap: 40px;
+  margin-top: 80px;
+}
+
+.blog-card {
+  background-color: #1a1a1a;
+  border-radius: 16px;
+  overflow: hidden;
+  /* Card lift and shadow on hover */
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+  /* Set opacity for initial GSAP fade-in */
+  opacity: 0; 
+}
+
+.blog-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
+}
+
+.blog-image-wrap {
+  height: 280px;
+  overflow: hidden;
+}
+
+.blog-image-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s ease;
+}
+
+.blog-card:hover .blog-image-wrap img {
+  /* Image zoom effect on card hover */
+  transform: scale(1.08);
+}
+
+.blog-details {
+  padding: 24px;
+}
+
+.blog-details .h3 {
+  font-family: var(--Playfair);
+  font-size: 32px;
+  color: #fff;
+  margin-bottom: 14px;
+  line-height: 1.2;
+}
+
+.blog-details .paragraph-03 {
+  color: #aaa;
+  margin-bottom: 20px;
+  line-height: 1.6;
+  font-size: 16px;
+}
+
+.blog-details .button-02-text {
+  /* Style for the "Read More" button/link */
+  background-color: #0BA34E;
+  color: #fff;
+  font-weight: 500;
+  padding: 10px 16px;
+  border-radius: 8px;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.blog-details .button-02-text:hover {
+  background-color: #0ecc5e;
+  transform: translateY(-3px);
+}
+
+/* Responsive Overrides for new blog cards */
+@media screen and (max-width: 767px) {
+  .blog-cards {
+    grid-template-columns: 1fr; /* Stack cards vertically on smaller screens */
+    gap: 30px;
+  }
+  .blog-details .h3 {
+    font-size: 24px;
+  }
+  .blog-image-wrap {
+    height: 220px;
+  }
+}

@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Graphic Design Narrative - DigiWebNow</title>
+    
+    <!-- No external stylesheet link - CSS is embedded below -->
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.css" rel="stylesheet"/>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Creato+Display:wght@400;700;900&display=swap');
+        
+        /* ==================================== */
+        /* GLOBAL THEME VARIABLES (From Index)  */
+        /* ==================================== */
+        :root {
+            /* Fonts */
+            --font-main: "Creato Display", Arial, sans-serif;
+            
+            /* Theme Colors */
+            --theme-deep-blue: #064AF9;      
+            --theme-purple: #A31AC0;         
+            --theme-cyan: #2FDDCD;           
+            --theme-indigo: #2825C0;         
+            
+            /* Core Site Colors */
+            --bg-color: #040810; 
+            --text-white: #ffffff;
+            --text-slate: #94a3b8;
+            --text-dark: var(--theme-deep-blue);
+            
+            /* Layout */
+            --nav-height: 80px;
+            --secondary-color: var(--theme-deep-blue);
+            
+            /* Project Page 2 Specific Mappings */
+            --brand-accent: var(--theme-cyan); 
+            --dark-bg: var(--bg-color);
+        }
+
+        /* ==================================== */
+        /* GLOBAL RESETS & UTILS                */
+        /* ==================================== */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body { 
+            background-color: var(--bg-color); 
+            color: var(--text-white); 
+            font-family: var(--font-main); 
+            overflow-x: hidden; 
+            cursor: none; 
+        }
+
+        a { text-decoration: none; }
+        ul { list-style: none; }
+
+        /* ==================================== */
+        /* NAVIGATION STYLES (Matching Index)   */
+        /* ==================================== */
+        .site-nav {
+            position: fixed; top: 0; left: 0; right: 0;
+            height: var(--nav-height);
+            background: rgba(2, 6, 23, 0.8);
+            backdrop-filter: blur(12px);
+            z-index: 9999; 
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            display: flex; align-items: center;
+        }
+        .nav-inner {
+            width: 100%; max-width: 1400px; margin: 0 auto;
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0 30px;
+        }
+        .nav__logo a { color: var(--text-white); font-weight: 700; font-size: 1.5rem; }
+        .nav__logo a span { color: var(--theme-cyan); }
+
+        .nav__links { display: flex; gap: 40px; list-style: none; }
+        .nav__links a { color: var(--text-white); font-weight: 500; transition: 0.3s; }
+        .nav__links a:hover { color: var(--theme-cyan); }
+        
+        .contact-btn {
+            background: linear-gradient(90deg, var(--theme-deep-blue), var(--theme-purple));
+            color: #fff; border: none; padding: 10px 25px;
+            border-radius: 8px; cursor: pointer;
+            display: flex; align-items: center; gap: 0.5rem;
+            font-weight: 600; transition: transform 0.2s;
+        }
+        .contact-btn:hover { 
+            transform: translateY(-2px); 
+            box-shadow: 0 4px 12px rgba(6, 74, 249, 0.3); 
+        }
+        .contact-btn svg { width: 1rem; height: 1rem; }
+        
+        /* Mobile Nav Adjustments */
+        @media (max-width: 768px) {
+            .nav__links { display: none; }
+        }
+
+        /* ==================================== */
+        /* FOOTER STYLES (Matching Index)       */
+        /* ==================================== */
+        footer {
+            background-color: var(--bg-color);
+            position: relative; z-index: 10;
+        }
+        .footer__container{
+            display: grid;
+            gap: 4rem 2rem;
+            background-color: var(--bg-color);
+            padding: 4rem 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .footer__logo{ margin-bottom: 2rem; }
+        .footer__logo a{
+            font-size: 1.25rem; font-weight: 800;
+            color: var(--text-dark);
+        }
+        .footer__logo a span{ color: var(--theme-cyan); }
+        .footer__col .section__description{ margin-bottom: 2rem; text-align: left; color: var(--text-slate); }
+        .footer__col h3{ margin-bottom: 1rem; font-size: 1.25rem; font-weight: 700; color: var(--text-dark); }
+        
+        .footer__socials{ display: flex; align-items: center; gap: 0.5rem; }
+        .footer__socials a{
+            padding: 4px 6px; font-size: 1.25rem;
+            color: var(--secondary-color);
+            border: 1px solid var(--secondary-color);
+            border-radius: 100%;
+            transition: 0.3s;
+        }
+        .footer__socials a:hover{ color: var(--text-white); background-color: var(--secondary-color); }
+        
+        .footer__col h4{ margin-bottom: 2rem; font-size: 1.2rem; font-weight: 700; color: var(--text-dark); }
+        .footer__links{ display: grid; gap: 1rem; }
+        .footer__links a{ font-size: 1rem; font-weight: 500; color: var(--text-slate); transition: 0.3s; }
+        .footer__links a:hover{ color: var(--secondary-color); }
+        .footer__links a span{ margin-right: 0.5rem; font-size: 1.25rem; color: var(--secondary-color); }
+        
+        .footer__bar{
+            background-color: var(--bg-color);
+            padding: 1rem; font-size: 1rem; font-weight: 500;
+            color: var(--text-slate); text-align: center;
+        }
+        
+        @media (min-width: 540px) {
+            .footer__container{ grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+        }
+        @media (min-width: 768px) {
+            .footer__container{ grid-template-columns: repeat(5, 1fr); }
+            .footer__col:nth-child(1){ grid-column: 1/3; max-width: 350px; }
+        }
+
+        /* ==================================== */
+        /* PROJECT PAGE SPECIFIC STYLES         */
+        /* ==================================== */
+        
+        /* Custom Cursor (Dot & Outline Style from Index) */
+        .cursor-dot,
+        .cursor-outline {
+            pointer-events: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            z-index: 99999;
+            opacity: 1;
+            transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+        }
+
+        .cursor-dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--secondary-color); /* Use deep blue */
+        }
+
+        .cursor-outline {
+            width: 40px;
+            height: 40px;
+            border: 2px solid var(--secondary-color);
+            transition: width 0.3s ease-in-out, height 0.3s ease-in-out, border 0.3s ease-in-out;
+        }
+
+        /* Cursor hover state */
+        body:has(a:hover, button:hover) .cursor-outline {
+            width: 60px;
+            height: 60px;
+            border-width: 3px;
+            /* Use a transparent version of cyan/aqua theme color for the hover glow */
+            background-color: rgba(47, 221, 205, 0.2); 
+        }
+        
+        body:has(a:hover, button:hover) .cursor-dot {
+            opacity: 0;
+        }
+        
+        /* Hide cursor on mobile */
+        @media (max-width: 768px) {
+            .cursor-dot, .cursor-outline {
+                display: none;
+            }
+            body {
+                cursor: auto;
+            }
+        }
+        
+        .noise-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; opacity: 0.04; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E"); }
+        
+        .text-display { line-height: 0.9; letter-spacing: -0.03em; }
+        
+        .split-section { min-height: 90vh; display: flex; align-items: center; justify-content: center; padding: 6rem 0; position: relative; z-index: 10; }
+        .image-container { position: relative; overflow: hidden; border-radius: 20px; box-shadow: 0 20px 60px -20px rgba(47, 221, 205, 0.15); transition: transform 0.5s ease; height: 600px; }
+        .slide-img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 1s ease-in-out, transform 4s linear; transform: scale(1); }
+        .slide-img.active { opacity: 1; transform: scale(1.1); }
+        
+        .text-container h2 { font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 900; line-height: 1.1; margin-bottom: 1.5rem; color: white; }
+        .text-container p { font-size: clamp(1rem, 1.2vw, 1.25rem); line-height: 1.7; color: #a1a1aa; margin-bottom: 2rem; }
+        
+        .pill-tag { display: inline-block; padding: 6px 16px; border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 50px; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--brand-accent); margin-bottom: 1.5rem; }
+        
+        .divider-line { height: 1px; width: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent); margin: 2rem 0; }
+        main { position: relative; z-index: 10; }
+    </style>
+</head>
+<body>
+    <!-- Overlay Elements -->
+    <div class="cursor-dot"></div>
+    <div class="cursor-outline"></div>
+    <div class="noise-overlay"></div>
+
+    <!-- 
+        NAVIGATION 
+        Matched exactly to index.html structure
+    -->
+    <nav class="site-nav">
+      <div class="nav-inner">
+        <div class="nav__logo">
+            <!-- Href points back to index.html -->
+            <h1><a href="index.html">DigiWebNow</a></h1>
+        </div>
+    
+        <ul class="nav__links">
+          <!-- Links point back to specific sections on index.html -->
+          <a href="index.html#about">About Us</a>
+          <a href="index.html#portfolio">Portfolio</a>
+          <a href="index.html#services">Services</a>
+          <a href="index.html#blog">Blog</a>
+        </ul>
+    
+        <button class="contact-btn">Let's Talk
+          <svg fill="none" viewBox="0 0 20 20"><path fill="#fff" d="M2.5 14.375V17.5h3.125l9.217-9.217-3.125-3.125L2.5 14.375Zm14.758-8.508a.83.83 0 0 0 0-1.175l-1.95-1.95a.83.83 0 0 0-1.175 0l-1.525 1.525 3.125 3.125 1.525-1.525Z"></path></svg>
+        </button>
+      </div>
+    </nav>
+
+    <!-- MAIN CONTENT -->
+    <main class="pt-32 pb-20 px-4 md:px-12 max-w-[1800px] mx-auto">
+        
+        <!-- Hero Section -->
+        <header class="mb-32 text-center relative">
+            <a href="index.html#portfolio" class="inline-flex items-center gap-2 text-gray-400 text-sm mb-6 hover:text-[--brand-accent] transition-colors hover-trigger z-20 relative"><i class="ri-arrow-left-line"></i> Back to Portfolio</a>
+            <h1 class="text-display text-[12vw] font-black uppercase text-white leading-none relative z-10 mix-blend-difference" id="p2-hero-title">
+                <div class="overflow-hidden"><span class="hero-line block">Visual</span></div>
+                <div class="overflow-hidden"><span class="hero-line block text-transparent bg-clip-text" style="background-image: linear-gradient(to right, var(--brand-accent), var(--theme-purple));">Intelligence</span></div>
+            </h1>
+            <p class="text-xl text-gray-400 max-w-2xl mx-auto mt-8 relative z-10" id="p2-hero-desc">More than just pretty pictures. We design strategic visual assets that define brands, capture attention, and drive conversion.</p>
+        </header>
+
+        <!-- SECTION 1 -->
+        <section class="split-section hover-trigger group">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start w-full">
+                <div class="image-container w-full order-1" id="slider-1">
+                    <img id="p2-s1-img1" src="images/projects/graphic_logo1.jpg" class="slide-img active" alt="Logo 1">
+                    <img id="p2-s1-img2" src="images/projects/graphic_logo2.jpg" class="slide-img" alt="Logo 2">
+                    <img id="p2-s1-img3" src="images/projects/graphic_logo3.jpg" class="slide-img" alt="Logo 3">
+                    <div class="absolute bottom-8 left-8 bg-black/60 backdrop-blur-md p-4 rounded-xl border border-white/10 z-10">
+                        <div class="text-xs text-gray-400 uppercase">Project Type</div>
+                        <div class="text-white font-bold">Identity System</div>
+                    </div>
+                </div>
+                <div class="text-container px-4 lg:pl-8 order-2 sticky top-32">
+                    <span class="pill-tag">01 • Identity</span>
+                    <h2 id="p2-s1-title">The Art of the Logo</h2>
+                    <p id="p2-s1-text1">A logo isn't just a symbol; it's the silent ambassador of your brand. It serves as the foundational element of your visual identity, instantly communicating your values, industry, and professionalism to potential customers.</p>
+                    <p id="p2-s1-text2">At DigiWebNow, we don't just "draw" logos. We engineer them. Using grid systems, color psychology, and scalability testing, we ensure your mark looks as sharp on a favicon as it does on a billboard.</p>
+                </div>
+            </div>
+        </section>
+
+        <div class="divider-line"></div>
+
+        <!-- SECTION 2 -->
+        <section class="split-section hover-trigger group">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start w-full">
+                <div class="text-container px-4 lg:pr-8 order-2 lg:order-1 sticky top-32">
+                    <span class="pill-tag">02 • Social</span>
+                    <h2 id="p2-s2-title">Social Media Graphics</h2>
+                    <p id="p2-s2-text1">In the scroll economy, you have less than 3 seconds to stop a thumb. Social media graphics are the high-octane fuel for your engagement engine. They need to be bold, legible, and instantly recognizable as <em>yours</em>.</p>
+                    <p id="p2-s2-text2">We design cohesive social suites—Instagram carousels, Story templates, and LinkedIn banners—that turn casual scrollers into loyal followers.</p>
+                </div>
+                <div class="image-container w-full order-1 lg:order-2" id="slider-2">
+                    <img id="p2-s2-img1" src="images/projects/graphic_social1.jpg" class="slide-img active" alt="IG 1">
+                    <img id="p2-s2-img2" src="images/projects/graphic_social2.jpg" class="slide-img" alt="IG 2">
+                    <img id="p2-s2-img3" src="images/projects/graphic_social3.jpg" class="slide-img" alt="IG 3">
+                </div>
+            </div>
+        </section>
+
+        <div class="divider-line"></div>
+
+        <!-- SECTION 3 -->
+        <section class="split-section hover-trigger group">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start w-full">
+                <div class="image-container w-full order-1" id="slider-3">
+                    <img id="p2-s3-img1" src="images/projects/graphic_thumb1.jpg" class="slide-img active" alt="Thumb 1">
+                    <img id="p2-s3-img2" src="images/projects/graphic_thumb2.jpg" class="slide-img" alt="Thumb 2">
+                    <img id="p2-s3-img3" src="images/projects/graphic_thumb3.jpg" class="slide-img" alt="Thumb 3">
+                </div>
+                <div class="text-container px-4 lg:pl-8 order-2 sticky top-32">
+                    <span class="pill-tag">03 • Content</span>
+                    <h2 id="p2-s3-title">High-CTR Thumbnails</h2>
+                    <p id="p2-s3-text1">The best video in the world is useless if no one clicks on it. A thumbnail is a promise to the viewer; it needs to incite curiosity, emotion, or urgency immediately.</p>
+                    <p id="p2-s3-text2">Our thumbnail design strategy is data-driven. We use contrasting colors, expressive facial integration, and bold typography to maximize Click-Through Rate (CTR).</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Call to Action -->
+        <section class="py-32 text-center relative z-10 border-t border-gray-800 mt-12">
+            <p class="uppercase tracking-widest text-sm mb-4" style="color: var(--brand-accent);">Ready to visualize your brand?</p>
+            <h2 class="text-[7vw] font-bold leading-none mb-12 text-white hover-trigger">Start Designing</h2>
+            <a href="#" class="inline-block text-lg font-bold px-12 py-5 rounded-full hover:scale-105 hover-trigger shadow-[0_0_30px_rgba(47,221,205,0.2)]" style="background: linear-gradient(90deg, var(--theme-deep-blue), var(--theme-purple)); color: white; transition: background 0.3s ease, transform 0.3s ease;">Get a Quote <i class="ri-arrow-right-line ml-2"></i></a>
+        </section>
+        
+    </main>
+
+    <!-- 
+        FOOTER 
+        Matched exactly to index.html structure
+    -->
+    <footer>
+        <div class="section__container footer__container">
+            <div class="footer__col">
+                <div class="footer__logo">
+                    <!-- Link points back to index.html -->
+                    <a href="index.html">DIGIWEB<span>NOW</span></a>
+                </div>
+                <p class="section__description">
+                   DIGIWEBNOW is a creative digital agency dedicated to delivering innovative solutions. 
+                </p>
+                <h3>Follow Us</h3>   
+                <ul class="footer__socials">
+                    <li><a href="#"><i class="ri-facebook-fill"></i></a></li>
+                    <li><a href="#"><i class="ri-twitter-fill"></i></a></li>
+                    <li><a href="#"><i class="ri-instagram-fill"></i></a></li>
+                    <li><a href="#"><i class="ri-behance-fill"></i></a></li>
+                    <li><a href="#"><i class="ri-youtube-fill"></i></a></li>
+                </ul>
+            </div>
+            <div class="footer__col">
+                <h4>Quick Links</h4>
+                <ul class="footer__links">
+                    <li><a href="#">About DIGIWEBNOW</a></li>
+                    <li><a href="#">Latest News & Blogs</a></li>
+                    <li><a href="#">Terms of Users</a></li>
+                    <li><a href="#">Our Services</a></li>
+                    <li><a href="#">Need a Career?</a></li>
+                </ul>
+            </div>
+            <div class="footer__col">
+                <h4>Support</h4>
+                <ul class="footer__links">
+                    <li><a href="#">Help Center</a></li>
+                    <li><a href="#">FAQs</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Report an Issue</a></li>
+                    <li><a href="#">Get a Quote</a></li>
+                </ul>
+            </div>
+            <div class="footer__col">
+                <h4>Contact Us</h4>
+                <ul class="footer__links">
+                    <li><a href="#d">
+                      <span><i class="ri-phone-fill"></i></span> +91 0987654321
+                    </a>
+                </li>
+                    <li><a href="#">
+                        <span><i class="ri-mail-fill"></i></span> info@digiwebnow.com
+                    </a>
+                </li>
+                    <li><a href="#">
+                        <span><i class="ri-map-pin-fill"></i></span>  2456 Royal In. Delhi
+                    </a>
+                </li>
+                </ul>
+             </div>
+        </div>
+        <div class="footer__bar">
+           Copyright © 2025 DIGIWEBNOW. All rights reserved.
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>
+        gsap.registerPlugin(ScrollTrigger);
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- LOAD DATA FROM ADMIN PANEL ---
+            const loadData = () => {
+                const s = localStorage.getItem('DIGIWEB_PROJ_DETAIL_2');
+                if(!s) return;
+                try {
+                    const d = JSON.parse(s);
+                    const setT = (id, txt) => { const el = document.getElementById(id); if(el && txt) el.textContent = txt; };
+                    const setI = (id, src) => { const el = document.getElementById(id); if(el && src) el.src = src; };
+
+                    // Hero
+                    if(d.heroTitle) {
+                        const parts = d.heroTitle.split(' ');
+                        const last = parts.pop();
+                        const first = parts.join(' ');
+                        const html = `<div class="overflow-hidden"><span class="hero-line block">${first}</span></div><div class="overflow-hidden"><span class="hero-line block text-transparent bg-clip-text" style="background-image: linear-gradient(to right, var(--brand-accent), var(--theme-purple));">${last}</span></div>`;
+                        document.getElementById('p2-hero-title').innerHTML = html;
+                    }
+                    setT('p2-hero-desc', d.heroDesc);
+
+                    // Sections
+                    setT('p2-s1-title', d.s1Title); setT('p2-s1-text1', d.s1Text1); setT('p2-s1-text2', d.s1Text2);
+                    if(d.s1Imgs) { setI('p2-s1-img1', d.s1Imgs[0]); setI('p2-s1-img2', d.s1Imgs[1]); setI('p2-s1-img3', d.s1Imgs[2]); }
+
+                    setT('p2-s2-title', d.s2Title); setT('p2-s2-text1', d.s2Text1); setT('p2-s2-text2', d.s2Text2);
+                    if(d.s2Imgs) { setI('p2-s2-img1', d.s2Imgs[0]); setI('p2-s2-img2', d.s2Imgs[1]); setI('p2-s2-img3', d.s2Imgs[2]); }
+
+                    setT('p2-s3-title', d.s3Title); setT('p2-s3-text1', d.s3Text1); setT('p2-s3-text2', d.s3Text2);
+                    if(d.s3Imgs) { setI('p2-s3-img1', d.s3Imgs[0]); setI('p2-s3-img2', d.s3Imgs[1]); setI('p2-s3-img3', d.s3Imgs[2]); }
+
+                } catch(e) { console.error("Error loading P2 data", e); }
+            };
+            loadData();
+
+            // --- ANIMATIONS ---
+            // Updated to match the main site logic (Dot & Outline)
+            const dot = document.querySelector(".cursor-dot");
+            const out = document.querySelector(".cursor-outline");
+            const triggers = document.querySelectorAll('.hover-trigger, a, button');
+            
+            if (dot && out) {
+                window.addEventListener("mousemove", (e) => {
+                    const x = e.clientX;
+                    const y = e.clientY;
+                    dot.style.left = `${x}px`;
+                    dot.style.top = `${y}px`;
+                    out.animate({ left: `${x}px`, top: `${y}px` }, { duration: 500, fill: "forwards" });
+                });
+            }
+
+            gsap.from(".hero-line", { y: 150, opacity: 0, duration: 1.2, ease: "power4.out", stagger: 0.15, delay: 0.2 });
+
+            document.querySelectorAll('.split-section').forEach((sec) => {
+                gsap.from(sec.querySelector('.image-container'), { y: 50, opacity: 0, scale: 0.95, duration: 1.2, ease: "power3.out", scrollTrigger: { trigger: sec, start: "top 80%" } });
+                gsap.from(sec.querySelector('.text-container').children, { y: 30, opacity: 0, duration: 1, stagger: 0.1, ease: "power3.out", scrollTrigger: { trigger: sec, start: "top 80%" } });
+            });
+
+            document.querySelectorAll('.image-container').forEach(slider => {
+                const images = slider.querySelectorAll('.slide-img');
+                if(images.length <= 1) return;
+                let currentIndex = 0;
+                setInterval(() => {
+                    images[currentIndex].classList.remove('active');
+                    currentIndex = (currentIndex + 1) % images.length;
+                    images[currentIndex].classList.add('active');
+                }, 3000);
+            });
+        });
+    </script>
+</body>
+</html>

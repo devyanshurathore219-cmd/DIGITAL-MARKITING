@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog - DigiWebNow</title>
+    
+    <!-- CSS Dependencies -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/locomotive-scroll@3.5.4/dist/locomotive-scroll.css">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.css" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Embedded Styles -->
+    <style>
+        /* === GLOBAL VARIABLES === */
+        :root {
+            --font-main: 'Inter', sans-serif;
+            
+            /* THEME COLORS */
+            --theme-deep-blue: #064AF9;      /* Primary */
+            --theme-purple: #A31AC0;         /* Secondary */
+            --theme-cyan: #2FDDCD;           /* Accent */
+            
+            /* CORE COLORS */
+            --bg-color: #040810; 
+            --text-white: #ffffff;
+            --text-slate: #94a3b8;
+            --card-bg: #1a1a1a;
+            
+            /* ALIASES */
+            --primary-color: var(--theme-purple);
+            --secondary-color: var(--theme-deep-blue);
+            --text-dark: var(--theme-deep-blue); 
+            --accent-green: var(--theme-cyan);
+            
+            --nav-height: 80px;
+            --spacing-container: 1380px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: var(--font-main); }
+        body { cursor: none; background-color: var(--bg-color); color: var(--text-white); overflow-x: hidden; }
+
+        /* --- CUSTOM CURSOR --- */
+        .cursor-dot, .cursor-outline {
+            pointer-events: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            border-radius: 50%; z-index: 99999; opacity: 1;
+            transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+        }
+        .cursor-dot { width: 8px; height: 8px; background-color: var(--theme-deep-blue); }
+        .cursor-outline { width: 40px; height: 40px; border: 2px solid var(--theme-deep-blue); transition: all 0.2s ease-out; }
+
+        body:has(a:hover, button:hover, .blog-card:hover) .cursor-outline {
+            width: 60px; height: 60px; background-color: rgba(47, 221, 205, 0.2); border-color: var(--theme-cyan);
+        }
+        body:has(a:hover, button:hover) .cursor-dot { opacity: 0; }
+
+        @media (max-width: 768px) { .cursor-dot, .cursor-outline { display: none; } body { cursor: auto; } }
+
+        /* --- LOADER --- */
+        #loader { position: fixed; inset: 0; z-index: 99999; background: #fff; display: flex; align-items: center; justify-content: center; }
+        #loader-inner { width: 60vw; height: 20vh; background: #111; border-radius: 80px; }
+        nav, #main { opacity: 0; }
+
+        /* --- NAVIGATION --- */
+        .site-nav {
+            position: fixed; top: 0; left: 0; right: 0; height: var(--nav-height);
+            background: rgba(2, 6, 23, 0.8); backdrop-filter: blur(12px);
+            z-index: 9999; border-bottom: 1px solid rgba(255,255,255,0.05);
+            display: flex; align-items: center;
+        }
+        .nav-inner { width: 100%; max-width: 1400px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 0 30px; }
+        .nav__logo h1 a { color: var(--text-white); font-weight: 700; font-size: 1.5rem; text-decoration: none; }
+        .nav__links { display: flex; gap: 40px; list-style: none; }
+        .nav__links a { color: var(--text-white); text-decoration: none; font-weight: 500; transition: 0.3s; }
+        .nav__links a:hover { color: var(--theme-cyan); }
+
+        .contact-btn {
+            background: linear-gradient(90deg, var(--theme-deep-blue), var(--theme-purple));
+            color: #fff; border: none; padding: 10px 25px; border-radius: 8px; cursor: pointer;
+            display: flex; align-items: center; gap: 0.5rem; font-weight: 600; transition: 0.3s;
+        }
+        .contact-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(6, 74, 249, 0.3); }
+        .contact-btn svg { width: 1rem; height: 1rem; }
+
+        /* --- PAGE HEADERS (Blog & Post) --- */
+        .page-header {
+            padding-top: calc(var(--nav-height) + 60px); padding-bottom: 60px;
+            background: radial-gradient(circle at 50% 0%, #1a1a2e 0%, var(--bg-color) 70%);
+            text-align: center; position: relative;
+        }
+        .page-header h1 {
+            font-size: clamp(3rem, 5vw, 5rem); font-weight: 800; line-height: 1.1; margin-bottom: 1rem;
+            background: linear-gradient(to right, #fff, #94a3b8); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .page-header p { font-size: 1.2rem; color: var(--text-slate); max-width: 600px; margin: 0 auto; }
+        .page-header span { color: var(--theme-cyan); }
+
+        /* --- SEARCH BAR --- */
+        .search-container {
+            max-width: 600px; margin: -30px auto 50px; position: relative; z-index: 10; padding: 0 20px;
+        }
+        .search-box {
+            position: relative; display: flex; align-items: center;
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 50px; padding: 5px 20px; backdrop-filter: blur(10px);
+            transition: 0.3s;
+        }
+        .search-box:focus-within { border-color: var(--theme-cyan); box-shadow: 0 0 20px rgba(47, 221, 205, 0.2); }
+        .search-box i { color: var(--text-slate); font-size: 1.2rem; margin-right: 10px; }
+        .search-input {
+            background: transparent; border: none; outline: none; color: #fff;
+            font-size: 1rem; width: 100%; padding: 10px 0;
+        }
+        .search-input::placeholder { color: rgba(255,255,255,0.4); }
+
+        /* --- BLOG GRID & CARDS --- */
+        .blog-08 { padding: 40px 0 80px; background-color: var(--bg-color); min-height: 80vh; }
+        .container { max-width: var(--spacing-container); margin: 0 auto; padding: 0 20px; }
+
+        .blog-cards {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 40px;
+            perspective: 1000px;
+        }
+        .blog-card {
+            background-color: var(--card-bg); border-radius: 16px; overflow: hidden;
+            position: relative; display: flex; flex-direction: column;
+            border: 1px solid rgba(255,255,255,0.05); transition: 0.4s ease;
+            transform-style: preserve-3d;
+        }
+        .blog-card:hover {
+            box-shadow: 0 20px 50px rgba(47, 221, 205, 0.15); border-color: var(--theme-cyan); transform: translateY(-10px);
+        }
+        .blog-image-wrap {
+            height: 250px; width: 100%; overflow: hidden; position: relative;
+        }
+        .blog-image-wrap img {
+            width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease;
+        }
+        .blog-card:hover .blog-image-wrap img { transform: scale(1.1); }
+        .card-tag {
+            position: absolute; top: 15px; left: 15px; background: rgba(0,0,0,0.7);
+            color: var(--theme-cyan); padding: 5px 12px; border-radius: 50px;
+            font-size: 0.8rem; font-weight: 700; backdrop-filter: blur(4px); z-index: 2;
+        }
+        .blog-details { padding: 25px; flex-grow: 1; display: flex; flex-direction: column; }
+        .blog-meta { font-size: 0.85rem; color: #666; margin-bottom: 10px; }
+        .blog-details h3 { font-size: 1.5rem; color: #fff; margin-bottom: 12px; line-height: 1.3; font-weight: 600; }
+        .blog-details p { color: var(--text-slate); font-size: 0.95rem; line-height: 1.6; margin-bottom: 20px; flex-grow: 1; }
+
+        .button-02-text {
+            display: inline-flex; align-items: center; gap: 8px; background: transparent;
+            color: var(--theme-cyan); font-weight: 600; text-decoration: none; font-size: 0.9rem;
+            transition: 0.3s; padding: 0; border: none;
+        }
+        .button-02-text:hover { gap: 15px; color: #fff; }
+
+        /* --- FOOTER STYLES (Matching Index) --- */
+        footer { background-color: var(--bg-color); border-top: 1px solid rgba(255,255,255,0.05); padding: 60px 0 20px; }
+        .footer__container { display: grid; gap: 4rem 2rem; max-width: 1400px; margin: 0 auto; padding: 0 30px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+        
+        @media (min-width: 768px) {
+            .footer__container { grid-template-columns: repeat(4, 1fr); }
+            .footer__col:nth-child(1) { grid-column: 1 / 2; }
+        }
+
+        .footer__logo { margin-bottom: 2rem; }
+        .footer__logo a { font-size: 1.25rem; font-weight: 800; color: var(--text-white); text-decoration: none; }
+        .footer__logo span { color: var(--theme-cyan); }
+        
+        .section__description { margin-bottom: 2rem; text-align: left; color: var(--text-slate); font-size: 0.95rem; line-height: 1.6; }
+        
+        .footer__col h3, .footer__col h4 { margin-bottom: 1rem; font-size: 1.25rem; font-weight: 700; color: var(--text-dark); }
+        
+        .footer__socials { display: flex; align-items: center; gap: 0.5rem; list-style: none; }
+        .footer__socials a { padding: 8px 10px; font-size: 1.25rem; color: var(--secondary-color); border: 1px solid var(--secondary-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: 0.3s; text-decoration: none; }
+        .footer__socials a:hover { color: var(--text-white); background-color: var(--secondary-color); }
+        
+        .footer__links { display: grid; gap: 1rem; list-style: none; }
+        .footer__links a { font-size: 1rem; font-weight: 500; color: var(--text-slate); text-decoration: none; transition: 0.3s; }
+        .footer__links a:hover { color: var(--secondary-color); }
+        .footer__links a span { margin-right: 0.5rem; font-size: 1.25rem; color: var(--secondary-color); }
+        
+        .footer__bar { background-color: var(--bg-color); padding: 1rem; font-size: 1rem; font-weight: 500; color: var(--text-slate); text-align: center; margin-top: 4rem; border-top: 1px solid rgba(255,255,255,0.05); }
+
+        /* --- RESPONSIVE --- */
+        @media (max-width: 768px) {
+            .nav__links { display: none; } 
+            .hero-title { font-size: 3rem; }
+            .dimensional-container { grid-template-columns: 1fr; }
+            .footer__container { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    
+    <!-- Loader -->
+    <div id="loader"><div id="loader-inner"></div></div>
+
+    <!-- Custom Cursor -->
+    <div class="cursor-dot"></div>
+    <div class="cursor-outline"></div>
+
+    <!-- Navigation -->
+    <nav class="site-nav">
+        <div class="nav-inner">
+            <div class="nav__logo"><h1><a href="index.html">DigiWeb<span>Now</span></a></h1></div>
+            <ul class="nav__links">
+                <a href="index.html#about">About</a>
+                <a href="index.html#portfolio">Portfolio</a>
+                <a href="index.html#services">Services</a>
+                <a href="blog.html" style="color: var(--theme-cyan);">Blog</a>
+            </ul>
+            <button class="contact-btn">Let's Talk <i class="ri-arrow-right-up-line"></i></button>
+        </div>
+    </nav>
+
+    <!-- Main Scroll Container -->
+    <div id="main">
+        
+        <!-- Blog Header -->
+        <header class="page-header" data-scroll-section>
+            <div class="container">
+                <h1><span>Art.</span> Design Blog</h1>
+                <p>Insights, trends, and tutorials from the bleeding edge of web development and design.</p>
+            </div>
+        </header>
+
+        <!-- Search Bar Section -->
+        <div class="search-container" data-scroll-section>
+            <div class="search-box">
+                <i class="ri-search-line"></i>
+                <input type="text" id="searchInput" class="search-input" placeholder="Search by title or category..." onkeyup="filterPosts()">
+            </div>
+        </div>
+
+        <!-- Blog Grid -->
+        <section class="blog-08" data-scroll-section>
+            <div class="container">
+                <div class="blog-cards" id="blogGrid">
+                    <!-- Cards Injected via Script -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer data-scroll-section>
+            <div class="section__container footer__container">
+                <div class="footer__col">
+                    <div class="footer__logo">
+                        <a href="#">DIGIWEB<span>NOW</span></a>
+                    </div>
+                    <p class="section__description">
+                       DIGIWEBNOW is a creative digital agency dedicated to delivering innovative solutions. 
+                    </p>
+                    <h3>Follow Us</h3>   
+                    <ul class="footer__socials">
+                        <li><a href="#"><i class="ri-facebook-fill"></i></a></li>
+                        <li><a href="#"><i class="ri-twitter-fill"></i></a></li>
+                        <li><a href="#"><i class="ri-instagram-fill"></i></a></li>
+                        <li><a href="#"><i class="ri-behance-fill"></i></a></li>
+                        <li><a href="#"><i class="ri-youtube-fill"></i></a></li>
+                    </ul>
+                </div>
+                <div class="footer__col">
+                    <h4>Quick Links</h4>
+                    <ul class="footer__links">
+                        <li><a href="#">About DIGIWEBNOW</a></li>
+                        <li><a href="#">Latest News & Blogs</a></li>
+                        <li><a href="#">Terms of Users</a></li>
+                        <li><a href="#">Our Services</a></li>
+                        <li><a href="#">Need a Career?</a></li>
+                    </ul>
+                </div>
+                <div class="footer__col">
+                    <h4>Support</h4>
+                    <ul class="footer__links">
+                        <li><a href="#">Help Center</a></li>
+                        <li><a href="#">FAQs</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Report an Issue</a></li>
+                        <li><a href="#">Get a Quote</a></li>
+                    </ul>
+                </div>
+                <div class="footer__col">
+                    <h4>Contact Us</h4>
+                    <ul class="footer__links">
+                        <li><a href="#d">
+                          <span><i class="ri-phone-fill"></i></span> +91 0987654321
+                        </a>
+                    </li>
+                        <li><a href="#">
+                            <span><i class="ri-mail-fill"></i></span> info@digiwebnow.com
+                        </a>
+                    </li>
+                        <li><a href="#">
+                            <span><i class="ri-map-pin-fill"></i></span>  2456 Royal In. Delhi
+                        </a>
+                    </li>
+                    </ul>
+                 </div>
+            </div>
+            <div class="footer__bar">
+               Copyright © 2025 DIGIWEBNOW. All rights reserved.
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/locomotive-scroll@3.5.4/dist/locomotive-scroll.min.js"></script>
+    
+    <!-- Embedded Script -->
+    <script>
+        // 1. REGISTER GSAP
+        gsap.registerPlugin(ScrollTrigger);
+
+        // --- DEFAULT DATA ---
+        const DEFAULTS = {
+            BLOG: [
+                { id: 1, category: "Design", date: "Oct 24, 2025", image: "https://images.unsplash.com/photo-1561070791-2526d30994b5?q=80&w=2000&auto=format&fit=crop", title: "Design Trends of 2025", excerpt: "Explore how minimalism, AI-driven design, and immersive storytelling will shape the digital landscape.", link: "blog-post.html?id=1", featured: true },
+                { id: 2, category: "Branding", date: "Oct 18, 2025", image: "https://images.unsplash.com/photo-1600607686527-6fb886090705?q=80&w=2000&auto=format&fit=crop", title: "Why Branding Matters", excerpt: "Learn why consistent branding is essential for creating trust, loyalty and recognition.", link: "blog-post.html?id=2", featured: true },
+                { id: 3, category: "Tech", date: "Oct 12, 2025", image: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?q=80&w=2000&auto=format&fit=crop", title: "Future of UX/UI", excerpt: "Discover how user-centered design is evolving with Neural Interfaces and Spatial Computing.", link: "blog-post.html?id=3", featured: true },
+                { id: 4, category: "Marketing", date: "Sep 28, 2025", image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=2015&auto=format&fit=crop", title: "The Top 5 SEO Secrets", excerpt: "Uncover the advanced strategies experts use to dominate search engine results.", link: "blog-post.html?id=4", featured: false },
+                { id: 5, category: "Code", date: "Sep 15, 2025", image: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=2000&auto=format&fit=crop", title: "Mastering React Hooks", excerpt: "A deep dive into useEffect, useState, and custom hooks for cleaner code.", link: "blog-post.html?id=5", featured: false }
+            ]
+        };
+
+        // --- LOCOMOTIVE SCROLL ---
+        let locoScroll;
+        function initLocomotiveScroll() {
+            const scrollEl = document.querySelector("#main");
+            if (!scrollEl) return;
+
+            locoScroll = new LocomotiveScroll({
+                el: scrollEl,
+                smooth: true,
+                tablet: { smooth: true },
+                smartphone: { smooth: true }
+            });
+
+            locoScroll.on("scroll", ScrollTrigger.update);
+
+            ScrollTrigger.scrollerProxy("#main", {
+                scrollTop(value) {
+                    return arguments.length ? locoScroll.scrollTo(value, 0, 0) : locoScroll.scroll.instance.scroll.y;
+                },
+                getBoundingClientRect() {
+                    return { top: 0, left: 0, width: window.innerWidth, height: window.innerHeight };
+                },
+                pinType: "transform"
+            });
+
+            ScrollTrigger.addEventListener("refresh", () => locoScroll.update());
+            ScrollTrigger.defaults({ scroller: "#main" });
+        }
+
+        // --- FILTER FUNCTION ---
+        function filterPosts() {
+            const input = document.getElementById('searchInput');
+            const filter = input.value.toUpperCase();
+            const cards = document.querySelectorAll('.blog-card');
+
+            cards.forEach(card => {
+                const title = card.querySelector('h3').innerText;
+                const category = card.querySelector('.card-tag').innerText;
+                
+                if (title.toUpperCase().indexOf(filter) > -1 || category.toUpperCase().indexOf(filter) > -1) {
+                    card.style.display = "";
+                    // Re-trigger animation or fade in if needed, but simple display toggle works best for quick search
+                    card.style.opacity = 1; 
+                } else {
+                    card.style.display = "none";
+                }
+            });
+            
+            // Optional: Refresh ScrollTrigger if using Locomotive Scroll to update layout height
+            if (locoScroll) setTimeout(() => locoScroll.update(), 100);
+        }
+
+        // --- BLOG RENDER LOGIC ---
+        function initBlog() {
+            const grid = document.getElementById('blogGrid');
+            if (!grid) return;
+
+            // 1. Get Data
+            let blogData = DEFAULTS.BLOG;
+            const stored = localStorage.getItem('DIGIWEB_BLOG_DATA');
+            if(stored) {
+                try { const parsed = JSON.parse(stored); if(parsed.length > 0) blogData = parsed; } catch(e) {}
+            }
+
+            // 2. Filter based on Page Type
+            const isBlogPage = window.location.pathname.includes('blog.html');
+            let displayPosts = isBlogPage ? blogData : blogData.filter(p => p.featured).slice(0, 3);
+
+            // 3. Render
+            grid.innerHTML = displayPosts.map(post => `
+                <article class="blog-card" onclick="window.location.href='blog-post.html?id=${post.id}'">
+                    <div class="blog-image-wrap">
+                        <span class="card-tag">${post.category}</span>
+                        <img src="${post.image}" alt="${post.title}" loading="lazy">
+                    </div>
+                    <div class="blog-details">
+                        <div class="blog-meta"><time>${post.date}</time> • 5 min read</div>
+                        <h3>${post.title}</h3>
+                        <p>${post.excerpt}</p>
+                        <button class="button-02-text">Read Article <i class="ri-arrow-right-line"></i></button>
+                    </div>
+                </article>
+            `).join('');
+
+            // 4. Animate
+            gsap.fromTo('.blog-card', 
+                { y: 50, opacity: 0 },
+                { y: 0, opacity: 1, duration: 0.8, stagger: 0.1, ease: "power2.out", 
+                scrollTrigger: { trigger: "#blogGrid", start: "top 85%" } 
+                }
+            );
+        }
+
+        // --- CURSOR LOGIC ---
+        function initCursor() {
+            const dot = document.querySelector(".cursor-dot");
+            const out = document.querySelector(".cursor-outline");
+            if (!dot || !out) return;
+
+            window.addEventListener("mousemove", (e) => {
+                const x = e.clientX;
+                const y = e.clientY;
+                dot.style.left = `${x}px`;
+                dot.style.top = `${y}px`;
+                out.animate({ left: `${x}px`, top: `${y}px` }, { duration: 500, fill: "forwards" });
+            });
+        }
+
+        // --- INITIALIZATION ---
+        window.addEventListener("load", () => {
+            // 1. Logic
+            initBlog();
+            initCursor();
+
+            // 2. Loader Exit Animation
+            const tl = gsap.timeline();
+            tl.to("#loader-inner", { height: "100vh", width: "100vw", borderRadius: 0, duration: 0.8, ease: "power4.inOut" })
+            .to("#loader", { opacity: 0, duration: 0.5, onComplete: () => document.getElementById('loader').style.display = 'none' })
+            .to("nav, #main", { opacity: 1, duration: 0.5 });
+
+            // 3. Init Scroll (Delayed to ensure DOM is ready)
+            setTimeout(() => {
+                initLocomotiveScroll();
+                ScrollTrigger.refresh();
+            }, 100);
+        });
+    </script>
+</body>
+</html>

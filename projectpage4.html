@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DigiWebNow - Marketing Research</title>
+    
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Load Google Font (Inter) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Load Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    
+    <!-- Load Remixicon (for Footer) -->
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.6.0/fonts/remixicon.css" rel="stylesheet"/>
+
+    <style>
+        /* === GLOBAL VARIABLES (MATCHING MAIN SITE) === */
+        :root {
+            --theme-deep-blue: #064AF9;      /* Primary Blue */
+            --theme-purple: #A31AC0;         /* Secondary Purple */
+            --theme-cyan: #2FDDCD;           /* Tertiary Cyan / Accent Glow */
+            --theme-indigo: #2825C0;         /* Dark Accent */
+            
+            --bg-color: #040810; 
+            --text-white: #ffffff;
+            --text-slate: #94a3b8;
+            
+            /* Mapped Variables for consistency */
+            --brand-accent: var(--theme-cyan);
+            --secondary-color: var(--theme-deep-blue);
+            --text-dark: var(--theme-deep-blue);
+        }
+
+        /* --- Global Resets --- */
+        body {
+            cursor: none;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-white);
+            overflow-x: hidden;
+        }
+
+        /* === CUSTOM CURSOR (MATCHING MAIN SITE) === */
+        .cursor-dot,
+        .cursor-outline {
+            pointer-events: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            z-index: 99999;
+            opacity: 1;
+            transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+        }
+
+        .cursor-dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--secondary-color); /* Deep Blue */
+        }
+
+        .cursor-outline {
+            width: 40px;
+            height: 40px;
+            border: 2px solid var(--secondary-color);
+            transition: width 0.3s ease-in-out, height 0.3s ease-in-out, border 0.3s ease-in-out, background-color 0.3s ease-in-out;
+        }
+
+        /* Cursor hover state */
+        body:has(a:hover, button:hover) .cursor-outline {
+            width: 60px;
+            height: 60px;
+            border-width: 3px;
+            /* Cyan/Aqua theme color for the hover glow (transparent) */
+            background-color: rgba(47, 221, 205, 0.2); 
+            border-color: var(--theme-cyan);
+        }
+        
+        body:has(a:hover, button:hover) .cursor-dot {
+            opacity: 0;
+        }
+        
+        /* Hide cursor on mobile */
+        @media (max-width: 768px) {
+            .cursor-dot, .cursor-outline { display: none; }
+            body { cursor: auto; }
+        }
+
+        /* --- NAVIGATION BAR STYLES --- */
+        .site-nav {
+            position: fixed; top: 0; left: 0; right: 0; height: 80px;
+            background: rgba(2, 6, 23, 0.8); /* Matches main site nav bg */
+            backdrop-filter: blur(12px);
+            z-index: 999; display: flex; align-items: center;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .nav-inner {
+            width: 100%; max-width: 1400px; margin: 0 auto;
+            display: flex; align-items: center; padding: 0 30px;
+            justify-content: space-between;
+        }
+        .nav__logo h1 a {
+            color: var(--text-white); text-decoration: none; font-weight: 700; font-size: 1.5rem;
+        }
+        .nav__logo h1 a span { color: var(--theme-cyan); }
+        
+        .nav__links { display: flex; gap: 40px; list-style: none; margin: 0; padding: 0; }
+        .nav__links a {
+            color: var(--text-white); text-decoration: none; font-weight: 500; transition: 0.3s;
+        }
+        .nav__links a:hover { color: var(--theme-cyan); }
+        
+        /* Contact Button */
+        .contact-btn {
+            background: linear-gradient(90deg, var(--theme-deep-blue), var(--theme-purple));
+            color: #fff; border: none; padding: 10px 25px;
+            border-radius: 8px; cursor: pointer; display: flex; align-items: center; gap: 0.5rem;
+            font-weight: 600; transition: transform 0.2s;
+        }
+        .contact-btn:hover { 
+            transform: translateY(-2px); 
+            box-shadow: 0 4px 12px rgba(6, 74, 249, 0.3); 
+        }
+        .contact-btn svg { width: 1rem; height: 1rem; }
+        @media (max-width: 767px) {
+            .nav__links { display: none; } 
+            .site-nav { height: 64px; }
+            .nav-inner { padding: 0 20px; }
+        }
+
+        /* --- Animated Gradient Text for Hero --- */
+        .animated-gradient-text {
+            background: linear-gradient(90deg, var(--theme-deep-blue), var(--theme-cyan), var(--theme-purple), var(--theme-deep-blue));
+            background-size: 400% 100%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradient-flow 10s linear infinite;
+        }
+        @keyframes gradient-flow {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 100% 50%; }
+        }
+
+        /* Glassmorphism Effect for Bento Grid */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: background 0.3s ease, transform 0.3s ease;
+        }
+        .glass-card:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-5px);
+            border-color: var(--theme-cyan);
+            box-shadow: 0 20px 50px rgba(47, 221, 205, 0.1);
+        }
+
+        /* --- Scroll Animation Classes --- */
+        .scroll-fade, .scroll-slide-left, .scroll-slide-right {
+            opacity: 0; transition: opacity 0.8s ease-out, transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        .scroll-slide-left { transform: translateX(-50px); }
+        .scroll-slide-right { transform: translateX(50px); }
+        .visible { opacity: 1; transform: translateX(0); }
+        
+        /* --- Timeline --- */
+        .timeline-item { position: relative; padding-bottom: 2.5rem; padding-left: 35px; }
+        .timeline-item:before {
+            content: ''; position: absolute; left: 15px; top: 5px; bottom: -5px; width: 2px; background: #374151;
+        }
+        .timeline-item:last-child:before { display: none; }
+        .timeline-icon {
+            position: absolute; left: 0; top: 0; display: flex; align-items: center;
+            justify-content: center; width: 32px; height: 32px; border-radius: 50%;
+            background-color: var(--theme-cyan); color: #000; transform: translateX(-1px);
+        }
+
+        /* --- FOOTER STYLES (MATCHING MAIN SITE) --- */
+        footer {
+            background-color: var(--bg-color);
+        }
+        .footer__container {
+            display: grid; gap: 4rem 2rem;
+            background-color: var(--bg-color);
+            padding: 4rem 2rem; max-width: 1400px; margin: 0 auto;
+        }
+        .footer__logo { margin-bottom: 2rem; }
+        .footer__logo a {
+            font-size: 1.25rem; font-weight: 800; color: var(--theme-deep-blue); text-decoration: none;
+        }
+        .footer__logo a span { color: var(--theme-cyan); }
+        
+        .footer__col h3, .footer__col h4 {
+            margin-bottom: 1rem; font-size: 1.25rem; font-weight: 700; color: var(--theme-deep-blue);
+        }
+        .footer__col .section__description { margin-bottom: 2rem; text-align: left; color: var(--text-slate); }
+        
+        .footer__socials { display: flex; align-items: center; gap: 0.5rem; list-style: none; padding: 0; }
+        .footer__socials a {
+            padding: 4px 6px; font-size: 1.25rem; color: var(--theme-deep-blue);
+            border: 1px solid var(--theme-deep-blue); border-radius: 100%; transition: 0.3s;
+        }
+        .footer__socials a:hover { color: #fff; background-color: var(--theme-deep-blue); }
+        
+        .footer__links { display: grid; gap: 1rem; list-style: none; padding: 0; }
+        .footer__links a {
+            font-size: 1rem; font-weight: 500; color: var(--text-slate); text-decoration: none; transition: 0.3s;
+        }
+        .footer__links a:hover { color: var(--theme-deep-blue); }
+        .footer__links a span { margin-right: 0.5rem; font-size: 1.25rem; color: var(--theme-deep-blue); }
+        
+        .footer__bar {
+            background-color: var(--bg-color); padding: 1rem; font-size: 1rem;
+            font-weight: 500; color: var(--text-slate); text-align: center;
+        }
+        
+        @media (min-width: 540px) { .footer__container { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); } }
+        @media (min-width: 768px) {
+            .footer__container { grid-template-columns: repeat(5, 1fr); }
+            .footer__col:nth-child(1) { grid-column: 1/3; max-width: 350px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Custom Cursor Elements -->
+    <div class="cursor-dot"></div>
+    <div class="cursor-outline"></div>
+
+    <!-- Navigation Bar -->
+    <nav class="site-nav">
+      <div class="nav-inner">
+        <div class="nav__logo">
+            <!-- Matches index.html logic -->
+            <h1><a href="index.html">DIGIWEB<span>NOW</span></a></h1>
+        </div>
+    
+        <ul class="nav__links">
+          <li><a href="index.html#about">About Us</a></li>
+          <li><a href="index.html#portfolio">Portfolio</a></li>
+          <li><a href="index.html#services">Services</a></li>
+          <li><a href="index.html#blog">Blog</a></li>
+        </ul>
+    
+        <button class="contact-btn">Let's Talk
+          <svg fill="none" viewBox="0 0 20 20"><path fill="#fff" d="M2.5 14.375V17.5h3.125l9.217-9.217-3.125-3.125L2.5 14.375Zm14.758-8.508a.83.83 0 0 0 0-1.175l-1.95-1.95a.83.83 0 0 0-1.175 0l-1.525 1.525 3.125 3.125 1.525-1.525Z"></path></svg>
+        </button>
+      </div>
+    </nav>
+
+    <!-- Main Content Wrapper -->
+    <div class="pt-[80px]">
+
+        <!-- Hero Section -->
+        <section class="h-screen min-h-[700px] flex items-center justify-center text-center px-4">
+            <div class="scroll-fade">
+                <h1 class="text-5xl md:text-8xl font-extrabold tracking-tighter">
+                    <span id="p4-hero-title-start">Find Your</span>
+                    <span id="p4-hero-title-end" class="animated-gradient-text">Signal in the Noise.</span>
+                </h1>
+                <p id="p4-hero-desc" class="mt-6 text-xl md:text-2xl max-w-3xl mx-auto text-slate-400">
+                    We don't just find data. We find answers. Our Marketing Research dives deep into audience behavior, market trends, and competitor actions to give you a clear path forward.
+                </p>
+                <!-- Updated button to match main site gradient -->
+                <a href="#approach" class="mt-10 inline-block px-8 py-3 text-white font-semibold rounded-full shadow-lg transition-transform hover:scale-105"
+                   style="background: linear-gradient(90deg, var(--theme-deep-blue), var(--theme-purple)); box-shadow: 0 4px 12px rgba(6, 74, 249, 0.3);">
+                    See Our Approach
+                </a>
+            </div>
+        </section>
+
+        <!-- Bento Grid Section -->
+        <section id="approach" class="py-24 px-4 max-w-6xl mx-auto">
+            <h2 class="text-4xl md:text-6xl font-bold text-center mb-12 scroll-fade">
+                What We Uncover
+            </h2>
+            
+            <div id="p4-grid" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                
+                <!-- Card 1 (Large) - Cyan Icon -->
+                <div class="md:col-span-2 glass-card rounded-3xl p-8 scroll-slide-left">
+                    <div class="flex items-center gap-3 mb-4">
+                        <i data-lucide="users" style="color: var(--theme-cyan);"></i>
+                        <h3 id="p4-bento1-title" class="text-2xl font-semibold">Audience Deep-Dive</h3>
+                    </div>
+                    <p id="p4-bento1-desc" class="text-slate-300">
+                        Who are your customers? Really? We go beyond basic demographics to understand their motivations, pain points, and decision-making triggers.
+                    </p>
+                </div>
+                
+                <!-- Card 2 - Deep Blue Icon -->
+                <div class="glass-card rounded-3xl p-8 scroll-slide-right">
+                    <div class="flex items-center gap-3 mb-4">
+                        <i data-lucide="trending-up" style="color: var(--theme-deep-blue);"></i>
+                        <h3 id="p4-bento2-title" class="text-2xl font-semibold">Trend Spotting</h3>
+                    </div>
+                    <p id="p4-bento2-desc" class="text-slate-300">
+                        We analyze emerging trends, fads, and cultural shifts to find your next big opportunity before it's common knowledge.
+                    </p>
+                </div>
+
+                <!-- Card 3 - Purple Icon -->
+                <div class="glass-card rounded-3xl p-8 scroll-slide-left">
+                    <div class="flex items-center gap-3 mb-4">
+                        <i data-lucide="swords" style="color: var(--theme-purple);"></i>
+                        <h3 id="p4-bento3-title" class="text-2xl font-semibold">Competitor Intel</h3>
+                    </div>
+                    <p id="p4-bento3-desc" class="text-slate-300">
+                        Know their next move. We dissect competitor strategies, strengths, and weaknesses so you can position yourself to win.
+                    </p>
+                </div>
+
+                <!-- Card 4 (Large) - Cyan Icon -->
+                <div class="md:col-span-2 glass-card rounded-3xl p-8 scroll-slide-right">
+                    <div class="flex items-center gap-3 mb-4">
+                        <i data-lucide="pie-chart" style="color: var(--theme-cyan);"></i>
+                        <h3 id="p4-bento4-title" class="text-2xl font-semibold">Actionable Data Visualization</h3>
+                    </div>
+                    <p id="p4-bento4-desc" class="text-slate-300">
+                        Data is useless if it's confusing. We turn complex findings into clear, beautiful, and actionable dashboards that tell a story and guide your strategy.
+                    </p>
+                </div>
+
+                <!-- DYNAMIC EXTRA CARDS WILL APPEAR HERE -->
+
+            </div>
+        </section>
+
+        <!-- Stats Section -->
+        <section class="py-24 bg-slate-900/50">
+            <div class="max-w-6xl mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+                
+                <div class="scroll-fade">
+                    <h3 class="text-6xl font-bold animated-gradient-text">
+                        <span id="p4-stat1-val" class="stat-counter" data-target="90">0</span>%
+                    </h3>
+                    <p id="p4-stat1-label" class="mt-2 text-xl text-slate-400">Improved Market-Fit</p>
+                </div>
+                
+                <div class="scroll-fade" style="transition-delay: 200ms;">
+                    <h3 class="text-6xl font-bold animated-gradient-text">
+                        <span id="p4-stat2-val" class="stat-counter" data-target="300">0</span>%
+                    </h3>
+                    <p id="p4-stat2-label" class="mt-2 text-xl text-slate-400">Boost in Qualified Leads</p>
+                </div>
+
+                <div class="scroll-fade" style="transition-delay: 400ms;">
+                    <h3 class="text-6xl font-bold animated-gradient-text">
+                        <span id="p4-stat3-val" class="stat-counter" data-target="48">0</span>-hr
+                    </h3>
+                    <p id="p4-stat3-label" class="mt-2 text-xl text-slate-400">Trend Analysis Turnaround</p>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- Process Timeline Section -->
+        <section class="py-24 px-4 max-w-3xl mx-auto">
+            <h2 class="text-4xl md:text-6xl font-bold text-center mb-16 scroll-fade">
+                Our Research Process
+            </h2>
+            
+            <div class="relative">
+                <div class="timeline-item scroll-fade">
+                    <div class="timeline-icon">
+                        <i data-lucide="search" width="18"></i>
+                    </div>
+                    <h3 id="p4-step1-title" class="text-2xl font-semibold mb-2">1. Discovery & Definition</h3>
+                    <p id="p4-step1-desc" class="text-slate-400">We work with you to define the core questions. What do you *really* need to know?</p>
+                </div>
+                
+                <div class="timeline-item scroll-fade">
+                    <div class="timeline-icon">
+                        <i data-lucide="database" width="18"></i>
+                    </div>
+                    <h3 id="p4-step2-title" class="text-2xl font-semibold mb-2">2. Data Collection</h3>
+                    <p id="p4-step2-desc" class="text-slate-400">Using a mix of qualitative (interviews, focus groups) and quantitative (surveys, analytics) methods, we gather the raw data.</p>
+                </div>
+
+                <div class="timeline-item scroll-fade">
+                    <div class="timeline-icon">
+                        <i data-lucide="filter" width="18"></i>
+                    </div>
+                    <h3 id="p4-step3-title" class="text-2xl font-semibold mb-2">3. Analysis & Synthesis</h3>
+                    <p id="p4-step3-desc" class="text-slate-400">This is where the magic happens. We clean, analyze, and cross-reference the data to find patterns and insights.</p>
+                </div>
+
+                <div class="timeline-item scroll-fade">
+                    <div class="timeline-icon">
+                        <i data-lucide="flag" width="18"></i>
+                    </div>
+                    <h3 id="p4-step4-title" class="text-2xl font-semibold mb-2">4. Strategic Report</h3>
+                    <p id="p4-step4-desc" class="text-slate-400">You get a clear, concise report and dashboard—not a 100-page doc—with actionable recommendations.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- FOOTER (MATCHING INDEX.HTML EXACTLY) -->
+        <footer>
+            <div class="section__container footer__container">
+                <div class="footer__col">
+                    <div class="footer__logo">
+                        <a href="index.html">DIGIWEB<span>NOW</span></a>
+                    </div>
+                    <p class="section__description">
+                       DIGIWEBNOW is a creative digital agency dedicated to delivering innovative solutions. 
+                    </p>
+                    <h3>Follow Us</h3>   
+                    <ul class="footer__socials">
+                        <li><a href="#"><i class="ri-facebook-fill"></i></a></li>
+                        <li><a href="#"><i class="ri-twitter-fill"></i></a></li>
+                        <li><a href="#"><i class="ri-instagram-fill"></i></a></li>
+                        <li><a href="#"><i class="ri-behance-fill"></i></a></li>
+                        <li><a href="#"><i class="ri-youtube-fill"></i></a></li>
+                    </ul>
+                </div>
+                <div class="footer__col">
+                    <h4>Quick Links</h4>
+                    <ul class="footer__links">
+                        <li><a href="index.html#about">About DIGIWEBNOW</a></li>
+                        <li><a href="index.html#blog">Latest News & Blogs</a></li>
+                        <li><a href="#">Terms of Users</a></li>
+                        <li><a href="index.html#services">Our Services</a></li>
+                        <li><a href="#">Need a Career?</a></li>
+                    </ul>
+                </div>
+                <div class="footer__col">
+                    <h4>Support</h4>
+                    <ul class="footer__links">
+                        <li><a href="#">Help Center</a></li>
+                        <li><a href="#">FAQs</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Report an Issue</a></li>
+                        <li><a href="#">Get a Quote</a></li>
+                    </ul>
+                </div>
+                <div class="footer__col">
+                    <h4>Contact Us</h4>
+                    <ul class="footer__links">
+                        <li><a href="#">
+                          <span><i class="ri-phone-fill"></i></span> +91 0987654321
+                        </a>
+                    </li>
+                        <li><a href="#">
+                            <span><i class="ri-mail-fill"></i></span> info@digiwebnow.com
+                        </a>
+                    </li>
+                        <li><a href="#">
+                            <span><i class="ri-map-pin-fill"></i></span>  2456 Royal In. Delhi
+                        </a>
+                    </li>
+                    </ul>
+                 </div>
+                </div>
+                <div class="footer__bar">
+                   Copyright © 2025 DIGIWEBNOW. All rights reserved.
+             </div>
+        </footer>
+
+    </div> 
+
+    <!-- --- JavaScript for Animations & Cursor --- -->
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            
+            // --- Custom Cursor Logic (Matches script.js) ---
+            const cursorDot = document.querySelector(".cursor-dot");
+            const cursorOutline = document.querySelector(".cursor-outline");
+            
+            if (cursorDot && cursorOutline) {
+                window.addEventListener("mousemove", (e) => {
+                    const posX = e.clientX;
+                    const posY = e.clientY;
+
+                    // Dot trails slightly
+                    cursorDot.style.left = `${posX}px`;
+                    cursorDot.style.top = `${posY}px`;
+
+                    // Outline has a smoother, delayed trail
+                    cursorOutline.animate({
+                        left: `${posX}px`,
+                        top: `${posY}px`
+                    }, { duration: 500, fill: "forwards" });
+                });
+            }
+            
+            // --- Lucide Icons ---
+            lucide.createIcons();
+            
+            // --- Scroll-triggered fade/slide animations ---
+            const animatedElements = document.querySelectorAll('.scroll-fade, .scroll-slide-left, .scroll-slide-right');
+            
+            const scrollObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        scrollObserver.unobserve(entry.target); 
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            animatedElements.forEach(el => scrollObserver.observe(el));
+
+            // --- Stat Counter Animation ---
+            const statCounters = document.querySelectorAll('.stat-counter');
+            let hasAnimatedStats = false; 
+
+            const counterObserver = new IntersectionObserver((entries) => {
+                const entry = entries[0];
+                if (entry.isIntersecting && !hasAnimatedStats) {
+                    hasAnimatedStats = true; 
+                    statCounters.forEach(counter => {
+                        const target = +counter.getAttribute('data-target');
+                        const duration = 2000; 
+                        const stepTime = 20; 
+                        const steps = duration / stepTime;
+                        const increment = target / steps;
+                        let current = 0;
+                        
+                        const updateCounter = () => {
+                            current += increment;
+                            if (current >= target) {
+                                counter.innerText = Math.round(target); 
+                            } else {
+                                counter.innerText = Math.round(current);
+                                setTimeout(updateCounter, stepTime);
+                            }
+                        };
+                        updateCounter();
+                    });
+                }
+            }, { threshold: 0.5 });
+            
+            const statsSection = document.querySelector('.stat-counter');
+            if(statsSection) {
+                 counterObserver.observe(statsSection.parentElement.parentElement);
+            }
+
+            // --- LOAD DATA FROM ADMIN PANEL ---
+            const loadP4Data = () => {
+                const stored = localStorage.getItem('DIGIWEB_PROJ_DETAIL_4');
+                if(!stored) return;
+
+                try {
+                    const data = JSON.parse(stored);
+                    const setTxt = (id, txt) => { 
+                        const el = document.getElementById(id); 
+                        if(el && (txt !== undefined)) el.textContent = txt; 
+                    };
+
+                    setTxt('p4-hero-title-start', data.heroStart);
+                    setTxt('p4-hero-title-end', data.heroEnd);
+                    setTxt('p4-hero-desc', data.heroDesc);
+
+                    setTxt('p4-bento1-title', data.bento1Title); setTxt('p4-bento1-desc', data.bento1Desc);
+                    setTxt('p4-bento2-title', data.bento2Title); setTxt('p4-bento2-desc', data.bento2Desc);
+                    setTxt('p4-bento3-title', data.bento3Title); setTxt('p4-bento3-desc', data.bento3Desc);
+                    setTxt('p4-bento4-title', data.bento4Title); setTxt('p4-bento4-desc', data.bento4Desc);
+
+                    // Stats
+                    setTxt('p4-stat1-val', data.stat1Val); setTxt('p4-stat1-label', data.stat1Lbl);
+                    setTxt('p4-stat2-val', data.stat2Val); setTxt('p4-stat2-label', data.stat2Lbl);
+                    setTxt('p4-stat3-val', data.stat3Val); setTxt('p4-stat3-label', data.stat3Lbl);
+                    
+                    // Update counter targets
+                    const s1 = document.getElementById('p4-stat1-val'); if(s1 && data.stat1Val) s1.setAttribute('data-target', data.stat1Val);
+                    const s2 = document.getElementById('p4-stat2-val'); if(s2 && data.stat2Val) s2.setAttribute('data-target', data.stat2Val);
+                    const s3 = document.getElementById('p4-stat3-val'); if(s3 && data.stat3Val) s3.setAttribute('data-target', data.stat3Val);
+
+                    // Process
+                    setTxt('p4-step1-title', data.step1Title); setTxt('p4-step1-desc', data.step1Desc);
+                    setTxt('p4-step2-title', data.step2Title); setTxt('p4-step2-desc', data.step2Desc);
+                    setTxt('p4-step3-title', data.step3Title); setTxt('p4-step3-desc', data.step3Desc);
+                    setTxt('p4-step4-title', data.step4Title); setTxt('p4-step4-desc', data.step4Desc);
+
+                    // --- RENDER DYNAMIC CARDS ---
+                    if (data.extraCards && data.extraCards.length > 0) {
+                        const grid = document.getElementById('p4-grid');
+                        data.extraCards.forEach(card => {
+                            const cardHTML = `
+                                <div class="glass-card rounded-3xl p-8 scroll-slide-left">
+                                    <div class="flex items-center gap-3 mb-4">
+                                        <i data-lucide="${card.icon || 'star'}" style="color: var(--theme-cyan);"></i>
+                                        <h3 class="text-2xl font-semibold">${card.title}</h3>
+                                    </div>
+                                    <p class="text-slate-300">${card.desc}</p>
+                                </div>
+                            `;
+                            grid.insertAdjacentHTML('beforeend', cardHTML);
+                        });
+                        lucide.createIcons();
+                    }
+
+                } catch(e) { console.error("Error loading P4 Data", e); }
+            };
+            
+            loadP4Data();
+        });
+    </script>
+
+</body>
+</html>

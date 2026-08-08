@@ -8,27 +8,27 @@ gsap.registerPlugin(ScrollTrigger);
 // --- GLOBAL DATA DEFAULTS (Updated Links for Master Page) ---
 const DEFAULTS = {
     HERO: [
-        { id: 0, title: "Web Development", subtitle: "Architecting the Digital Future", description: "We build robust, scalable, and lightning-fast web applications.", colors: ["#06b6d4", "#2563eb"], icon: "ri-code-s-slash-line", tech: ["React", "Node.js", "WebGL"], stat: "99.9% Uptime", image: "https://www.creative-tim.com/blog/content/images/size/w960/2022/01/which-development-job-is-right-for-you.jpg" },
-        { id: 1, title: "Graphic Design", subtitle: "Visuals That Breathe", description: "Forging brand identities that resonate.", colors: ["#a855f7", "#db2777"], icon: "ri-pen-nib-line", tech: ["UI/UX", "Motion", "Branding"], stat: "Award Winning", image: "https://images.unsplash.com/photo-1626785774583-b61d52677109?q=80&w=2071&auto=format&fit=crop" },
+        { id: 0, title: "Web Development", subtitle: "Architecting the Digital Future", description: "We build robust, scalable, and lightning-fast web applications.", colors: ["#06b6d4", "#2563eb"], icon: "ri-code-s-slash-line", tech: ["React", "Node.js", "WebGL"], stat: "99.9% Uptime", image: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=1000&auto=format&fit=crop" },
+        { id: 1, title: "Graphic Design", subtitle: "Visuals That Breathe", description: "Forging brand identities that resonate.", colors: ["#a855f7", "#db2777"], icon: "ri-pen-nib-line", tech: ["UI/UX", "Motion", "Branding"], stat: "Award Winning", image: "https://images.unsplash.com/photo-1561070791-2526d30994b5?q=80&w=1000&auto=format&fit=crop" },
         { id: 2, title: "Digital Marketing", subtitle: "Data-Driven Dominance", description: "Scaling your reach through algorithmic precision.", colors: ["#f97316", "#dc2626"], icon: "ri-bar-chart-grouped-line", tech: ["SEO", "PPC", "Growth"], stat: "300% ROI", image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=2070&auto=format&fit=crop" }
     ],
     PROJECTS: [
-        { id: 1, title: "Mono & Motion", category: "Website", subtitle: "Design & Dev", isLarge: false, link: "projectpage1.html", image: "https://img.freepik.com/free-psd/flat-design-interior-design-template_23-2150031565.jpg?semt=ais_hybrid&w=740&q=80" },
+        { id: 1, title: "Mono & Motion", category: "Website", subtitle: "Design & Dev", isLarge: false, link: "projectpage1.html", image: "images/projects/mono_hero.jpg" },
         { id: 2, title: "Zero Studio", category: "App", subtitle: "Design & Dev", isLarge: true, link: "projectpage2.html", image: "https://images.unsplash.com/photo-1545239351-ef35f43d514b?q=80&w=1974&auto=format&fit=crop" },
-        { id: 3, title: "Creative Canvas", category: "Design", subtitle: "Branding", isLarge: false, link: "projectpage3.html", image: "https://images.unsplash.com/photo-1558655146-d09347e0b7a9?q=80&w=2070&auto=format&fit=crop" },
+        { id: 3, title: "Creative Canvas", category: "Design", subtitle: "Branding", isLarge: false, link: "projectpage3.html", image: "https://images.unsplash.com/photo-1561070791-2526d30994b5?q=80&w=1000&auto=format&fit=crop" },
         { id: 4, title: "Pixel Pioneers", category: "App", subtitle: "UI/UX", isLarge: false, link: "projectpage4.html", image: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=2070&auto=format&fit=crop" }
     ],
     BLOG: [
         { id: 1, category: "Design", date: "Oct 24, 2025", image: "https://cdn.prod.website-files.com/68751abd96d2074611f9be95/687fa830bf6c16612accd187_Project%20Image%2002.avif", title: "Design Trends of 2025", excerpt: "Explore how minimalism, AI-driven design, and immersive storytelling will shape the digital landscape.", link: "blog-post.html?id=1", featured: true },
         { id: 2, category: "Branding", date: "Oct 18, 2025", image: "https://cdn.prod.website-files.com/68751abd96d2074611f9be95/687fa8955342ad8583494a7b_Project%20Image%2004.avif", title: "Why Branding Matters", excerpt: "Learn why consistent branding is essential for creating trust, loyalty and recognition in the digital space.", link: "blog-post.html?id=2", featured: true },
         { id: 3, category: "Tech", date: "Oct 12, 2025", image: "https://cdn.prod.website-files.com/68751abd96d2074611f9be95/687fa7ff583252dd175256f7_Project%20Image%2001.avif", title: "Future of UX/UI", excerpt: "Discover how user-centered design is evolving with Neural Interfaces and Spatial Computing.", link: "blog-post.html?id=3", featured: true },
-        { id: 4, category: "Marketing", date: "Sep 28, 2025", image: "https://placehold.co/400x350/1a1a1a/0BA34E?text=SEO+Secrets", title: "The Top 5 SEO Secrets", excerpt: "Uncover the advanced strategies experts use to dominate search engine results and drive organic traffic.", link: "blog-post.html?id=4", featured: false }
+        { id: 4, category: "Marketing", date: "Sep 28, 2025", image: "images/blog/blog_seo.jpg", title: "The Top 5 SEO Secrets", excerpt: "Uncover the advanced strategies experts use to dominate search engine results and drive organic traffic.", link: "blog-post.html?id=4", featured: false }
     ],
     SERVICES: [
         { title: "Web Development", desc: "Scalable, high-performance web applications built with React & Node.js.", icon: "ri-code-s-slash-line", image: "https://images.unsplash.com/photo-1607705703571-c5a8695f18f6?q=80&w=2070&auto=format&fit=crop" },
         { title: "UI/UX Design", desc: "User-centric interfaces that drive engagement and improve conversion rates.", icon: "ri-pen-nib-line", image: "https://images.unsplash.com/photo-1561070791-2526d30994b5?q=80&w=2000&auto=format&fit=crop" },
         { title: "Digital Marketing", desc: "Data-driven SEO & PPC strategies to boost your online visibility.", icon: "ri-bar-chart-grouped-line", image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=2015&auto=format&fit=crop" },
-        { title: "E-Commerce", desc: "Secure, optimized online stores built on Shopify and WooCommerce.", icon: "ri-shopping-bag-3-line", image: "https://images.unsplash.com/photo-1556742049-0cfed4f7a07d?q=80&w=2070&auto=format&fit=crop" }
+        { title: "E-Commerce", desc: "Secure, optimized online stores built on Shopify and WooCommerce.", icon: "ri-shopping-bag-3-line", image: "https://images.unsplash.com/photo-1556740758-90de374c12ad?q=80&w=1000&auto=format&fit=crop" }
     ]
 };
 
@@ -435,7 +435,7 @@ function initBlog() {
         <article class="blog-card" style="opacity:0; transform:translateY(50px)">
             <div class="blog-image-wrap">
                 <span class="card-tag">${post.category}</span>
-                <img src="${post.image}" alt="${post.title}" onerror="this.src='https://via.placeholder.com/400x300/1a1a1a/cccccc?text=Image+Not+Found'">
+                <img src="${post.image}" alt="${post.title}" onerror="this.onerror=null;this.src='https://placehold.co/400x300/1a1a1a/cccccc?text=Image+Not+Found'">
             </div>
             <div class="blog-details">
                 <div>
